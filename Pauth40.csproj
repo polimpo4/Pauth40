@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Pauth40</RootNamespace>
+    <AssemblyName>Pauth40</AssemblyName>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <Version>2.0.0</Version>
+    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Product>Pauth40 - Two Factor Authenticator</Product>
+    <AssemblyTitle>Pauth40</AssemblyTitle>
+    <Description>Modern local two-factor authenticator for Windows.</Description>
+    <Company>Pat&#227;o</Company>
+    <Authors>Pat&#227;o</Authors>
+    <Copyright>Copyright &#169; Pat&#227;o</Copyright>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <UseLayoutRounding>true</UseLayoutRounding>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Otp.NET" Version="1.4.0" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.14" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\duck.png" />
+    <Resource Include="Assets\app_mark.png" />
+    <Resource Include="Assets\duck_silhouette.png" />
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+</Project>

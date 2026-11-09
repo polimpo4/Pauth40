@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+dist/
+
+# Visual Studio / Rider
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Test output
+TestResults/
+*.log
+
+# Local vault / security data (never commit)
+accounts.dat
+accounts.dat.legacy.bak
+security.json
+*.pauth40

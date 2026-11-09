@@ -1,0 +1,387 @@
+<Window x:Class="Pauth40.Views.SecurityWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Pauth40 - Segurança"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Width="570" Height="760"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#020B16"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            ResizeBorderThickness="0"
+                            GlassFrameThickness="0"
+                            CornerRadius="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Grid x:Name="RootGrid" ClipToBounds="True" Background="{StaticResource WindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================ TITLE BAR -->
+        <Grid Grid.Row="0" Background="#06111F" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Border VerticalAlignment="Bottom" Height="1" Background="#1B4164" />
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+                <Path Data="{StaticResource IconShield}"
+                      Style="{StaticResource LineIcon}"
+                      Stroke="{StaticResource CyanBrush}"
+                      StrokeThickness="1.7"
+                      Width="21" Height="21" />
+                <TextBlock x:Name="WindowTitleText"
+                           Text="Pauth40 - Segurança"
+                           Style="{StaticResource WindowTitleText}"
+                           FontSize="15.5"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <Button Style="{StaticResource CloseTitleBarButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"
+                    ToolTip="Fechar" Click="Close_Click" AutomationProperties.Name="Fechar">
+                <Path Data="{StaticResource IconClose}"
+                      Stroke="{StaticResource TextSecondaryBrush}"
+                      StrokeThickness="1.6"
+                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                      Width="13" Height="13" Stretch="Uniform" />
+            </Button>
+        </Grid>
+
+        <!-- ============================================================ CONTENT -->
+        <ScrollViewer Grid.Row="1"
+                      Margin="30,22,30,24"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Focusable="False">
+            <Grid>
+                <!-- ==================================================== SETUP -->
+                <StackPanel x:Name="SetupPanel" Visibility="Collapsed">
+                    <TextBlock Text="Proteja seu cofre"
+                               Style="{StaticResource SectionHeading}"
+                               FontSize="27" />
+                    <TextBlock Text="Defina a senha e o e-mail usados para abrir o Pauth40. O código de recuperação de senha é enviado para esse e-mail."
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,9,0,24" />
+
+                    <TextBlock Text="E-MAIL" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="SetupEmailBox"
+                             Style="{StaticResource FieldTextBox}"
+                             MaxLength="254"
+                             LostFocus="SetupEmail_LostFocus"
+                             AutomationProperties.Name="E-mail" />
+
+                    <TextBlock Text="SENHA" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
+                    <PasswordBox x:Name="SetupPasswordBox"
+                                 Style="{StaticResource FieldPasswordBox}"
+                                 MaxLength="128"
+                                 AutomationProperties.Name="Senha" />
+
+                    <TextBlock Text="CONFIRMAR SENHA" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
+                    <PasswordBox x:Name="SetupConfirmBox"
+                                 Style="{StaticResource FieldPasswordBox}"
+                                 MaxLength="128"
+                                 AutomationProperties.Name="Confirmar senha" />
+
+                    <CheckBox x:Name="SetupSmtpCheckBox"
+                              Style="{StaticResource FieldCheckBox}"
+                              Content="Configurar o envio de e-mail agora (recomendado)"
+                              Margin="0,20,0,0"
+                              Checked="SetupSmtp_Checked"
+                              Unchecked="SetupSmtp_Unchecked" />
+
+                    <StackPanel x:Name="SetupSmtpPanel" Visibility="Collapsed" Margin="0,16,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="104" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="SERVIDOR SMTP" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="SetupSmtpHostBox" Style="{StaticResource FieldTextBox}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                <TextBlock Text="PORTA" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="SetupSmtpPortBox" Style="{StaticResource FieldTextBox}" Text="587" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="USUÁRIO SMTP" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <TextBox x:Name="SetupSmtpUserBox" Style="{StaticResource FieldTextBox}" />
+
+                        <TextBlock Text="SENHA DE APP" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <PasswordBox x:Name="SetupSmtpPasswordBox" Style="{StaticResource FieldPasswordBox}" MaxLength="128" />
+
+                        <CheckBox x:Name="SetupSmtpSslCheckBox"
+                                  Style="{StaticResource FieldCheckBox}"
+                                  Content="Usar SSL/TLS (recomendado)"
+                                  IsChecked="True"
+                                  Margin="0,14,0,0" />
+
+                        <TextBlock Text="Em Gmail, Outlook e iCloud use uma senha de app, não a senha normal da conta."
+                                   Style="{StaticResource MutedText}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,10,0,0" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="SetupErrorText"
+                               Foreground="{StaticResource DangerBrush}"
+                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                               FontSize="12.5"
+                               TextWrapping="Wrap"
+                               Margin="2,14,0,0" />
+
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Height="48"
+                            Margin="0,20,0,0"
+                            Click="Setup_Click"
+                            AutomationProperties.Name="Criar cofre protegido">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Path Data="{StaticResource IconLock}"
+                                  Style="{StaticResource LineIcon}"
+                                  Stroke="#F7FDFF" StrokeThickness="1.8"
+                                  Width="19" Height="19" />
+                            <TextBlock Text="Criar cofre protegido"
+                                       Style="{StaticResource ButtonLabel}"
+                                       FontSize="17"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- ==================================================== UNLOCK -->
+                <StackPanel x:Name="UnlockPanel" Visibility="Collapsed">
+                    <TextBlock Text="Bem-vindo de volta"
+                               Style="{StaticResource SectionHeading}"
+                               FontSize="27" />
+                    <TextBlock Text="Digite sua senha para desbloquear o cofre de autenticação."
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,9,0,22" />
+
+                    <Border Style="{StaticResource SectionCard}" Padding="16,13" Margin="0,0,0,18">
+                        <StackPanel>
+                            <TextBlock Text="E-MAIL ASSOCIADO" Style="{StaticResource FieldLabel}" Margin="2,0,0,5" />
+                            <TextBlock x:Name="UnlockEmailText"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="SENHA" Style="{StaticResource FieldLabel}" />
+                    <PasswordBox x:Name="UnlockPasswordBox"
+                                 Style="{StaticResource FieldPasswordBox}"
+                                 MaxLength="128"
+                                 KeyDown="UnlockPassword_KeyDown"
+                                 AutomationProperties.Name="Senha" />
+
+                    <TextBlock x:Name="UnlockErrorText"
+                               Foreground="{StaticResource DangerBrush}"
+                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                               FontSize="12.5"
+                               TextWrapping="Wrap"
+                               Margin="2,14,0,0" />
+
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Height="48"
+                            Margin="0,18,0,0"
+                            IsDefault="True"
+                            Click="Unlock_Click"
+                            AutomationProperties.Name="Desbloquear">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Path Data="{StaticResource IconLock}"
+                                  Style="{StaticResource LineIcon}"
+                                  Stroke="#F7FDFF" StrokeThickness="1.8"
+                                  Width="19" Height="19" />
+                            <TextBlock Text="Desbloquear"
+                                       Style="{StaticResource ButtonLabel}"
+                                       FontSize="17"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource LinkButton}"
+                            Content="Esqueci minha senha"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0"
+                            Click="Forgot_Click" />
+                </StackPanel>
+
+                <!-- ==================================================== RESET -->
+                <StackPanel x:Name="ResetPanel" Visibility="Collapsed">
+                    <TextBlock Text="Recuperar acesso"
+                               Style="{StaticResource SectionHeading}"
+                               FontSize="27" />
+                    <TextBlock x:Name="ResetSubtitleText"
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,9,0,18" />
+
+                    <StackPanel x:Name="ResetEmailArea">
+                        <Button x:Name="SendCodeButton"
+                                Style="{StaticResource SecondaryButton}"
+                                Height="46"
+                                Click="SendCode_Click"
+                                AutomationProperties.Name="Enviar código por e-mail">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Path Data="{StaticResource IconMail}"
+                                      Style="{StaticResource LineIcon}"
+                                      Stroke="{StaticResource CyanBrush}"
+                                      StrokeThickness="1.6"
+                                      Width="18" Height="18" />
+                                <TextBlock Text="Enviar código por e-mail"
+                                           Style="{StaticResource ButtonLabel}"
+                                           FontSize="15"
+                                           Margin="9,0,0,0"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock x:Name="ResetStatusText"
+                                   Foreground="{StaticResource CyanBrush}"
+                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                   FontSize="12.5"
+                                   TextWrapping="Wrap"
+                                   Margin="2,10,0,0" />
+
+                        <StackPanel x:Name="ResetSmtpPanel" Visibility="Collapsed" Margin="0,14,0,0">
+                            <Border Style="{StaticResource SectionCard}" Padding="16,14">
+                                <StackPanel>
+                                    <TextBlock Text="CONFIGURAÇÃO DE E-MAIL"
+                                               Style="{StaticResource FieldLabel}"
+                                               Foreground="{StaticResource CyanBrush}"
+                                               Margin="0,0,0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="104" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="SERVIDOR SMTP" Style="{StaticResource FieldLabel}" />
+                                            <TextBox x:Name="ResetSmtpHostBox" Style="{StaticResource FieldTextBox}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <TextBlock Text="PORTA" Style="{StaticResource FieldLabel}" />
+                                            <TextBox x:Name="ResetSmtpPortBox" Style="{StaticResource FieldTextBox}" Text="587" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <TextBlock Text="USUÁRIO SMTP" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
+                                    <TextBox x:Name="ResetSmtpUserBox" Style="{StaticResource FieldTextBox}" />
+
+                                    <TextBlock Text="SENHA DE APP" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
+                                    <PasswordBox x:Name="ResetSmtpPasswordBox" Style="{StaticResource FieldPasswordBox}" MaxLength="128" />
+
+                                    <CheckBox x:Name="ResetSmtpSslCheckBox"
+                                              Style="{StaticResource FieldCheckBox}"
+                                              Content="Usar SSL/TLS"
+                                              IsChecked="True"
+                                              Margin="0,12,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Text="CÓDIGO RECEBIDO" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
+                        <TextBox x:Name="ResetCodeBox"
+                                 Style="{StaticResource FieldTextBox}"
+                                 MaxLength="6"
+                                 FontFamily="Cascadia Mono, Consolas, Courier New"
+                                 FontSize="18"
+                                 CharacterCasing="Upper" />
+                    </StackPanel>
+
+                    <StackPanel x:Name="ResetPasswordArea">
+                        <TextBlock Text="NOVA SENHA" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
+                        <PasswordBox x:Name="ResetPasswordBox"
+                                     Style="{StaticResource FieldPasswordBox}"
+                                     MaxLength="128" />
+
+                        <TextBlock Text="CONFIRMAR NOVA SENHA" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <PasswordBox x:Name="ResetConfirmBox"
+                                     Style="{StaticResource FieldPasswordBox}"
+                                     MaxLength="128" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="DpapiNoteText"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                               FontSize="12"
+                               TextWrapping="Wrap"
+                               Visibility="Collapsed"
+                               Margin="0,14,0,0" />
+
+                    <TextBlock x:Name="ResetErrorText"
+                               Foreground="{StaticResource DangerBrush}"
+                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                               FontSize="12.5"
+                               TextWrapping="Wrap"
+                               Margin="2,14,0,0" />
+
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Height="48"
+                            Margin="0,18,0,0"
+                            IsDefault="True"
+                            Click="Reset_Click"
+                            AutomationProperties.Name="Redefinir senha">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Path Data="{StaticResource IconKey}"
+                                  Style="{StaticResource LineIcon}"
+                                  Stroke="#F7FDFF" StrokeThickness="1.8"
+                                  Width="19" Height="19" />
+                            <TextBlock Text="Redefinir senha"
+                                       Style="{StaticResource ButtonLabel}"
+                                       FontSize="17"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Orientation="Vertical" Margin="0,14,0,0">
+                        <Button x:Name="DpapiResetLink"
+                                Style="{StaticResource LinkButton}"
+                                Content="Redefinir usando esta conta do Windows"
+                                HorizontalAlignment="Center"
+                                Click="UseDpapi_Click" />
+                        <Button Style="{StaticResource LinkButton}"
+                                Content="Voltar para o login"
+                                HorizontalAlignment="Center"
+                                Margin="0,8,0,0"
+                                Click="BackToUnlock_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- ============================================================ FRAME -->
+        <Border Grid.RowSpan="2"
+                CornerRadius="12"
+                BorderThickness="1"
+                IsHitTestVisible="False">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#5500D9FF" Offset="0" />
+                    <GradientStop Color="#26007BFF" Offset="0.45" />
+                    <GradientStop Color="#4D0050C8" Offset="1" />
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,145 @@
+# Pauth40 - Two Factor Authenticator
+
+A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **XAML** and **MVVM**. The interface is a full reconstruction of the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome.
+
+<img src="docs/screenshots/03-main.png" alt="Pauth40 main window" width="820">
+
+## What it does
+
+Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into live **TOTP** codes on your Windows desktop. Accounts are kept in a local vault protected by a master password and encrypted with **AES-256-GCM**; nothing is sent to a cloud service, and there is no telemetry. You can add accounts by capturing a QR code from the screen, by dragging QR image files onto the window, or by importing a legacy `novos` folder. The current code is always one click (or `Ctrl+C`) away.
+
+- **Local and private** - the vault never leaves your computer; the only network request is an optional recovery/test e-mail that you configure yourself.
+- **Password + e-mail protected** - the app asks for the master password at startup and can recover access through a 6-digit e-mail code.
+- **Portable backups** - export an encrypted `.pauth40` file and import it on another machine.
+- **Native WPF** - no Electron, no WebView, no embedded browser.
+
+## Screenshots
+
+| First run | Unlock |
+| --- | --- |
+| <img src="docs/screenshots/01-setup.png" alt="First-run password setup" width="380"> | <img src="docs/screenshots/02-unlock.png" alt="Unlock screen" width="380"> |
+| Define the master password and the recovery e-mail. | The associated e-mail is shown masked; recovery is one click away. |
+
+<img src="docs/screenshots/04-settings.png" alt="Settings window" width="720">
+
+Settings hold the password change, SMTP/e-mail recovery configuration and the encrypted database export/import.
+
+## Features
+
+- Standard **TOTP** codes (SHA-1 / SHA-256 / SHA-512, 6-8 digits, custom periods).
+- **Password-protected vault**: a master password and an associated e-mail are required at startup. Accounts are encrypted at rest with **AES-256-GCM** in `%LOCALAPPDATA%\Pauth40\accounts.dat`.
+- **E-mail password recovery**: a 6-digit code valid for 10 minutes can be sent to the associated e-mail through your own SMTP server; a local Windows recovery copy also allows a reset on the same Windows account.
+- **Encrypted database export/import**: create a password-protected `.pauth40` backup and merge it back on any machine without duplicating accounts.
+- **Capture Screen** takes a screenshot, opens a dimmed selection overlay, scans the selected area with ZXing and imports the `otpauth://` account.
+- **Copy Code to ClipBoard** with clipboard retry handling and an inline confirmation state.
+- Custom dark **account selector**; selection updates the code immediately.
+- Account removal from the selector: the trash icon is always visible; click it twice within 6 seconds (or press `Delete` twice) to confirm.
+- Drag and drop QR image files (`.png`, `.jpg`, `.bmp`, `.gif`, `.tif`) onto the window.
+- Automatic, best-effort import of the original app's `novos\*.png` QR folder.
+- **Settings window** (gear in the title bar): change the master password, configure/test SMTP, export and import the database.
+- Resizable custom window: drag the title bar, double-click to maximize/restore, DPI-aware layout, Windows 11 rounded corners and dark DWM frame.
+
+## Security
+
+- TOTP secrets are never written to logs, telemetry or the network.
+- The vault is encrypted with a random 256-bit vault key using **AES-256-GCM**. The vault key is wrapped by a key derived from the master password with **PBKDF2-SHA256 (310,000 iterations)** and a random salt.
+- A second copy of the vault key is protected with **Windows DPAPI** (`CurrentUser`), which enables password reset on the same Windows user. That copy is what makes the local reset work; it does not exist on another computer or Windows account.
+- Settings in `security.json` contain the password verifier, salt, wrapped vault key, DPAPI recovery blob and SMTP configuration. Passwords and SMTP app passwords are stored only in encrypted form, never in clear text.
+- `accounts.dat` and `.pauth40` backups are authenticated with AES-GCM, so a wrong password or a modified file is rejected instead of silently returning corrupted data.
+- No cloud services, no telemetry, no external requests unless you explicitly send a recovery or test e-mail. The app works offline.
+- The reference code (`994195`) and countdown are **not** hardcoded; every value comes from `Otp.NET` and the system clock.
+
+## Build
+
+Requirements: Windows 10/11, .NET SDK 8.0 or newer (the project targets `net8.0-windows`).
+
+```powershell
+dotnet build .\Pauth40.csproj -c Release
+```
+
+## Publish a single executable
+
+```powershell
+.\build.ps1 -Publish
+```
+
+The self-contained, single-file executable is written to `dist\Pauth40.exe`.
+
+## Usage
+
+### First launch
+
+1. Start `Pauth40.exe`.
+2. On the **Proteja seu cofre** screen, enter the e-mail that will receive password-recovery codes, then define and confirm a master password (minimum 8 characters).
+3. Optionally enable **Configurar o envio de e-mail agora** and fill in your SMTP server, port, user and app password. Provider defaults are filled automatically for Gmail, Outlook, Yahoo, iCloud, Zoho and GMX. You can also do this later in **Configurações**.
+4. Click **Criar cofre protegido**. An existing legacy DPAPI vault is migrated automatically and a `accounts.dat.legacy.bak` copy is kept.
+
+### Daily use
+
+1. Start the app and enter your master password on the unlock screen. The associated e-mail is shown masked.
+2. Click **Capture Screen**, drag a rectangle around the QR code, and release.
+3. The account is added, encrypted and selected. The current code and countdown update automatically.
+4. Use **Copy Code to ClipBoard** (or `Ctrl+C`) to copy the visible code.
+5. Use the selector to switch accounts. Click the trash icon twice within 6 seconds to remove the selected account (or press `Delete` twice).
+
+### Settings
+
+Open the gear icon in the title bar to:
+
+- change the master password (current password + new password confirmation);
+- configure the SMTP server and send a test e-mail;
+- export a password-protected `.pauth40` backup, or import one and merge its accounts.
+
+### Forgot the password
+
+On the unlock screen click **Esqueci minha senha**:
+
+- **E-mail code** - send a 6-digit code to the associated address (valid for 10 minutes, at most 5 attempts), enter it and define a new password. If no SMTP server is saved yet, the reset screen lets you configure one inline.
+- **Reset using this Windows account** - use the DPAPI recovery copy to define a new password without e-mail. This works only on the same Windows user that created the vault; on another computer or user account, use the e-mail code instead.
+
+### Importing QR image files
+
+Drag one or more QR screenshots onto the window. Legacy `novos` folders are scanned at startup from the current directory, the executable directory and `%LOCALAPPDATA%\Pauth40\novos`.
+
+### Migrating from the original Pauth40
+
+The original app stored its QR screenshots in a `novos` folder beside its executable. Copy those `.png` files into any of these locations:
+
+- `%LOCALAPPDATA%\Pauth40\novos`
+- a `novos` folder next to the new `Pauth40.exe`
+- a `novos` folder in the current working directory
+
+On startup the app decodes every valid `otpauth://` QR, imports the account and ignores duplicates. If the vault is still the old DPAPI format, the first password setup migrates it to the encrypted keyed format. The source images are never modified. Dragging the same `.png` files onto the window performs the same import immediately.
+
+### Preview rendering (development)
+
+```powershell
+Pauth40.exe --render C:\temp\preview.png
+```
+
+This starts a temporary in-memory demo vault, renders the real WPF visual tree to a PNG and exits. It never reads or writes the user's account vault.
+
+Set the `PAUTH40_DATA_DIR` environment variable to point the app at an isolated data folder, useful for testing without touching the real profile.
+
+## Project layout
+
+```
+Pauth40.csproj
+App.xaml / App.xaml.cs          DI bootstrap, security gate and --render mode
+MainWindow.xaml / .cs           window chrome, layout, background, interaction
+ViewModels\MainViewModel.cs     accounts, TOTP timer, capture/copy/import commands
+Views\SecurityWindow.*          first-run setup, unlock and password recovery
+Views\SettingsWindow.*          password, SMTP and encrypted database settings
+Views\CaptureOverlayWindow.*    full-screen QR selection overlay
+Controls\CircularCountdown.cs   twin TOTP arcs
+Services\                       clipboard, capture, e-mail, commands
+Themes\PauthTheme.xaml          palette, brushes, control templates
+Account.cs                      account model
+AccountStore.cs                 AES-GCM keyed vault + legacy DPAPI migration
+SecurityService.cs              password verifier, key wrapping, DPAPI reset, SMTP, backups
+AppPaths.cs                     data-folder resolution (supports PAUTH40_DATA_DIR)
+TotpService.cs / OtpAuthParser.cs / QrDecoder.cs
+Assets\                         duck mascot and app icon
+docs\screenshots\               interface screenshots used by this README
+preview.png                     Latest --render output of the demo vault
+```
