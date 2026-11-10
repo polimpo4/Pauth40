@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Pauth40.Localization;
 using Pauth40.Services;
 using Pauth40.ViewModels;
 using Pauth40.Views;
@@ -72,7 +73,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            ShowToast("The account vault could not be fully loaded.");
+            ShowToast(Loc.T("main_vault_load_error"));
         }
     }
 

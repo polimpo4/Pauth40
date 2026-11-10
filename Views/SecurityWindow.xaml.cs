@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Pauth40.Localization;
 
 namespace Pauth40.Views;
 
@@ -26,6 +27,8 @@ public partial class SecurityWindow : Window
 
     private int _cooldown;
     private bool _useDpapiReset;
+    private bool _suppressLanguageChange;
+    private Mode _mode;
 
     public SecurityWindow(SecurityService security, EmailService email)
     {
@@ -34,17 +37,85 @@ public partial class SecurityWindow : Window
 
         InitializeComponent();
 
+        InitializeLanguageSelector();
+
         _maxHeight = Math.Max(520, SystemParameters.WorkArea.Height - 48);
         _cooldownTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _cooldownTimer.Tick += OnCooldownTick;
-        Closed += (_, _) => _cooldownTimer.Stop();
+        Closed += (_, _) =>
+        {
+            _cooldownTimer.Stop();
+            LocalizationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        };
 
         ShowMode(_security.IsConfigured ? Mode.Unlock : Mode.Setup);
     }
 
+    private void InitializeLanguageSelector()
+    {
+        _suppressLanguageChange = true;
+
+        LanguageCombo.ItemsSource = LocalizationManager.Instance.Languages;
+        LanguageCombo.SelectedItem = LocalizationManager.Instance.CurrentLanguage;
+
+        _suppressLanguageChange = false;
+
+        LocalizationManager.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        _suppressLanguageChange = true;
+        LanguageCombo.SelectedItem = LocalizationManager.Instance.CurrentLanguage;
+        _suppressLanguageChange = false;
+
+        ApplyLanguageTexts();
+    }
+
+    private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressLanguageChange || LanguageCombo.SelectedItem is not LanguageOption option)
+            return;
+
+        LocalizationManager.Instance.SetLanguage(option.Code);
+    }
+
+    private void ApplyLanguageTexts()
+    {
+        string title = GetModeTitle();
+        Title = title;
+        WindowTitleText.Text = title;
+
+        if (_mode == Mode.Reset)
+        {
+            if (_useDpapiReset)
+            {
+                ResetSubtitleText.Text = Loc.T("security_reset_dpapi_subtitle");
+                DpapiNoteText.Text = Loc.T("security_reset_dpapi_note");
+            }
+            else
+            {
+                ResetSubtitleText.Text =
+                    Loc.Format("security_reset_subtitle", _security.MaskedEmail());
+            }
+        }
+    }
+
+    private string GetModeTitle() => _mode switch
+    {
+        Mode.Setup => Loc.T("security_title_setup"),
+        Mode.Unlock => Loc.T("security_title_unlock"),
+        _ => Loc.T("security_title_reset")
+    };
+
     private void ShowMode(Mode mode)
     {
+        _mode = mode;
         _useDpapiReset = false;
+
+        string title = GetModeTitle();
+        Title = title;
+        WindowTitleText.Text = title;
 
         SetupPanel.Visibility = mode == Mode.Setup ? Visibility.Visible : Visibility.Collapsed;
         UnlockPanel.Visibility = mode == Mode.Unlock ? Visibility.Visible : Visibility.Collapsed;
@@ -55,13 +126,11 @@ public partial class SecurityWindow : Window
         switch (mode)
         {
             case Mode.Setup:
-                WindowTitleText.Text = "Pauth40 - Primeiro acesso";
                 Height = Math.Min(760, _maxHeight);
                 Dispatcher.BeginInvoke(() => SetupEmailBox.Focus());
                 break;
 
             case Mode.Unlock:
-                WindowTitleText.Text = "Pauth40 - Desbloquear";
                 Height = Math.Min(650, _maxHeight);
                 UnlockEmailText.Text = _security.MaskedEmail();
                 UnlockPasswordBox.Clear();
@@ -69,11 +138,9 @@ public partial class SecurityWindow : Window
                 break;
 
             case Mode.Reset:
-                WindowTitleText.Text = "Pauth40 - Recuperar acesso";
                 Height = Math.Min(810, _maxHeight);
                 ResetSubtitleText.Text =
-                    $"Envie um código de 6 dígitos para {_security.MaskedEmail()}. " +
-                    "O código expira em 10 minutos.";
+                    Loc.Format("security_reset_subtitle", _security.MaskedEmail());
                 ResetEmailArea.Visibility = Visibility.Visible;
                 ResetPasswordArea.Visibility = Visibility.Visible;
                 DpapiResetLink.Visibility = Visibility.Visible;
@@ -164,21 +231,21 @@ public partial class SecurityWindow : Window
 
         if (!SecurityService.IsValidEmail(email))
         {
-            SetupErrorText.Text = "Informe um endereço de e-mail válido.";
+            SetupErrorText.Text = Loc.T("security_err_invalid_email");
             SetupEmailBox.Focus();
             return;
         }
 
         if (password.Length < 8)
         {
-            SetupErrorText.Text = "A senha precisa ter pelo menos 8 caracteres.";
+            SetupErrorText.Text = Loc.T("security_err_password_length");
             SetupPasswordBox.Focus();
             return;
         }
 
         if (!string.Equals(password, SetupConfirmBox.Password, StringComparison.Ordinal))
         {
-            SetupErrorText.Text = "As senhas não são iguais.";
+            SetupErrorText.Text = Loc.T("security_err_password_mismatch");
             SetupConfirmBox.SelectAll();
             SetupConfirmBox.Focus();
             return;
@@ -227,7 +294,7 @@ public partial class SecurityWindow : Window
             return;
         }
 
-        UnlockErrorText.Text = "Senha incorreta. Tente novamente.";
+        UnlockErrorText.Text = Loc.T("security_err_wrong_password");
         UnlockPasswordBox.SelectAll();
         UnlockPasswordBox.Focus();
     }
@@ -254,7 +321,7 @@ public partial class SecurityWindow : Window
 
         if (!_security.IsConfigured)
         {
-            ResetErrorText.Text = "A senha ainda não foi configurada.";
+            ResetErrorText.Text = Loc.T("security_err_not_configured");
             return;
         }
 
@@ -282,7 +349,7 @@ public partial class SecurityWindow : Window
 
             if (!_security.TryGetSmtpOptions(out options))
             {
-                ResetErrorText.Text = "As configurações de e-mail não estão completas.";
+                ResetErrorText.Text = Loc.T("security_err_email_incomplete");
                 return;
             }
         }
@@ -290,7 +357,7 @@ public partial class SecurityWindow : Window
         string code = _security.GenerateResetCode();
 
         SendCodeButton.IsEnabled = false;
-        ResetStatusText.Text = "Enviando código...";
+        ResetStatusText.Text = Loc.T("security_status_sending");
 
         try
         {
@@ -312,7 +379,7 @@ public partial class SecurityWindow : Window
         _cooldown = 30;
         SendCodeButton.IsEnabled = false;
         ResetStatusText.Text =
-            $"Código enviado para {_security.MaskedEmail()}. Reenvio em {_cooldown}s.";
+            Loc.Format("security_status_sent", _security.MaskedEmail(), _cooldown);
         _cooldownTimer.Start();
     }
 
@@ -324,12 +391,12 @@ public partial class SecurityWindow : Window
         {
             _cooldownTimer.Stop();
             SendCodeButton.IsEnabled = true;
-            ResetStatusText.Text = "Você pode reenviar o código.";
+            ResetStatusText.Text = Loc.T("security_status_resend");
             return;
         }
 
         ResetStatusText.Text =
-            $"Código enviado para {_security.MaskedEmail()}. Reenvio em {_cooldown}s.";
+            Loc.Format("security_status_sent", _security.MaskedEmail(), _cooldown);
     }
 
     private void UseDpapi_Click(object sender, RoutedEventArgs e)
@@ -339,18 +406,15 @@ public partial class SecurityWindow : Window
         if (!_security.HasDpapiRecovery)
         {
             ResetErrorText.Text =
-                "Este cofre não tem uma cópia de recuperação local do Windows.";
+                Loc.T("security_err_no_dpapi");
             return;
         }
 
         _useDpapiReset = true;
         ResetEmailArea.Visibility = Visibility.Collapsed;
         DpapiResetLink.Visibility = Visibility.Collapsed;
-        ResetSubtitleText.Text = "Defina uma nova senha para acessar o cofre neste computador.";
-        DpapiNoteText.Text =
-            "A recuperação local usa a cópia do cofre protegida pelo Windows para este usuário. " +
-            "Ela só funciona na mesma conta do Windows que criou o cofre. Se você trocar de " +
-            "computador ou de usuário, use o código enviado por e-mail.";
+        ResetSubtitleText.Text = Loc.T("security_reset_dpapi_subtitle");
+        DpapiNoteText.Text = Loc.T("security_reset_dpapi_note");
         DpapiNoteText.Visibility = Visibility.Visible;
         ResetPasswordBox.Focus();
     }
@@ -363,14 +427,14 @@ public partial class SecurityWindow : Window
 
         if (password.Length < 8)
         {
-            ResetErrorText.Text = "A nova senha precisa ter pelo menos 8 caracteres.";
+            ResetErrorText.Text = Loc.T("security_err_new_password_length");
             ResetPasswordBox.Focus();
             return;
         }
 
         if (!string.Equals(password, ResetConfirmBox.Password, StringComparison.Ordinal))
         {
-            ResetErrorText.Text = "As senhas não são iguais.";
+            ResetErrorText.Text = Loc.T("security_err_password_mismatch");
             ResetConfirmBox.SelectAll();
             ResetConfirmBox.Focus();
             return;
@@ -378,7 +442,7 @@ public partial class SecurityWindow : Window
 
         if (!_useDpapiReset && !_security.VerifyResetCode(ResetCodeBox.Text))
         {
-            ResetErrorText.Text = "Código inválido ou expirado. Envie um novo código.";
+            ResetErrorText.Text = Loc.T("security_err_reset_code");
             ResetCodeBox.SelectAll();
             ResetCodeBox.Focus();
             return;
@@ -426,7 +490,7 @@ public partial class SecurityWindow : Window
         string host = hostBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(host))
         {
-            errorText.Text = "Informe o servidor SMTP do seu provedor de e-mail.";
+            errorText.Text = Loc.T("security_err_smtp_host");
             hostBox.Focus();
             return false;
         }
@@ -435,7 +499,7 @@ public partial class SecurityWindow : Window
         if (!string.IsNullOrWhiteSpace(portBox.Text) &&
             (!int.TryParse(portBox.Text.Trim(), out port) || port < 1 || port > 65535))
         {
-            errorText.Text = "Informe uma porta SMTP válida (normalmente 587).";
+            errorText.Text = Loc.T("security_err_smtp_port");
             portBox.Focus();
             return false;
         }

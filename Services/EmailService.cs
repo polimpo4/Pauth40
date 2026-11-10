@@ -2,6 +2,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Pauth40.Localization;
 
 namespace Pauth40;
 
@@ -46,17 +47,17 @@ public sealed class EmailService
         string body)
     {
         if (string.IsNullOrWhiteSpace(options.Host))
-            throw new InvalidOperationException("O servidor SMTP não foi configurado.");
+            throw new InvalidOperationException(Loc.T("error_smtp_not_configured"));
 
         if (!SecurityService.IsValidEmail(to))
-            throw new InvalidOperationException("O e-mail de destino é inválido.");
+            throw new InvalidOperationException(Loc.T("error_destination_email"));
 
         string from = string.IsNullOrWhiteSpace(options.From)
             ? options.UserName
             : options.From;
 
         if (!SecurityService.IsValidEmail(from))
-            throw new InvalidOperationException("O remetente do e-mail é inválido.");
+            throw new InvalidOperationException(Loc.T("error_sender_email"));
 
         using var message = new MailMessage(from, to.Trim(), subject, body)
         {
@@ -87,8 +88,7 @@ public sealed class EmailService
         catch (Exception ex) when (ex is SmtpException or InvalidOperationException or IOException)
         {
             throw new InvalidOperationException(
-                "Não foi possível enviar o e-mail. Verifique o servidor, a porta e a senha de app. " +
-                ex.Message,
+                Loc.Format("error_send_failed", ex.Message),
                 ex);
         }
     }
@@ -97,21 +97,13 @@ public sealed class EmailService
         SendAsync(
             options,
             to,
-            "Pauth40 - código de redefinição de senha",
-            $"""
-            Seu código para redefinir a senha do Pauth40 é:
-
-                {code}
-
-            O código expira em 10 minutos. Se você não pediu esta redefinição,
-            ignore esta mensagem.
-            """);
+            Loc.T("email_reset_subject"),
+            Loc.Format("email_reset_body", code));
 
     public Task SendTestAsync(SmtpOptions options, string to) =>
         SendAsync(
             options,
             to,
-            "Pauth40 - teste de envio de e-mail",
-            "Este é um teste das configurações de e-mail do Pauth40. " +
-            "Se você recebeu esta mensagem, a recuperação de senha está pronta para uso.");
+            Loc.T("email_test_subject"),
+            Loc.T("email_test_body"));
 }

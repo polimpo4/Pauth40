@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
+using Pauth40.Localization;
 using Pauth40.ViewModels;
 
 namespace Pauth40.Views;
@@ -15,6 +16,7 @@ public partial class SettingsWindow : Window
     private readonly MainViewModel _viewModel;
     private readonly SecurityService _security;
     private readonly EmailService _email;
+    private bool _suppressLanguageChange;
 
     public SettingsWindow(
         MainViewModel viewModel,
@@ -29,8 +31,38 @@ public partial class SettingsWindow : Window
 
         Height = Math.Min(820, Math.Max(560, SystemParameters.WorkArea.Height - 48));
 
+        InitializeLanguageSelector();
+
         AccountEmailText.Text = _security.Email;
         LoadSmtp();
+    }
+
+    private void InitializeLanguageSelector()
+    {
+        _suppressLanguageChange = true;
+
+        LanguageCombo.ItemsSource = LocalizationManager.Instance.Languages;
+        LanguageCombo.SelectedItem = LocalizationManager.Instance.CurrentLanguage;
+
+        _suppressLanguageChange = false;
+
+        LocalizationManager.Instance.LanguageChanged += OnLanguageChanged;
+        Closed += (_, _) => LocalizationManager.Instance.LanguageChanged -= OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        _suppressLanguageChange = true;
+        LanguageCombo.SelectedItem = LocalizationManager.Instance.CurrentLanguage;
+        _suppressLanguageChange = false;
+    }
+
+    private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressLanguageChange || LanguageCombo.SelectedItem is not LanguageOption option)
+            return;
+
+        LocalizationManager.Instance.SetLanguage(option.Code);
     }
 
     /// <summary>Raised after a backup import changed the account list.</summary>
@@ -70,14 +102,14 @@ public partial class SettingsWindow : Window
 
         if (newPassword.Length < 8)
         {
-            SetStatus(PasswordStatusText, "A nova senha precisa ter pelo menos 8 caracteres.", true);
+            SetStatus(PasswordStatusText, Loc.T("settings_err_new_password_length"), true);
             NewPasswordBox.Focus();
             return;
         }
 
         if (!string.Equals(newPassword, ConfirmPasswordBox.Password, StringComparison.Ordinal))
         {
-            SetStatus(PasswordStatusText, "As senhas não são iguais.", true);
+            SetStatus(PasswordStatusText, Loc.T("settings_err_password_mismatch"), true);
             ConfirmPasswordBox.SelectAll();
             ConfirmPasswordBox.Focus();
             return;
@@ -91,7 +123,7 @@ public partial class SettingsWindow : Window
             NewPasswordBox.Clear();
             ConfirmPasswordBox.Clear();
 
-            SetStatus(PasswordStatusText, "Senha alterada com sucesso.", false);
+            SetStatus(PasswordStatusText, Loc.T("settings_status_password_changed"), false);
         }
         catch (Exception ex)
         {
@@ -109,7 +141,7 @@ public partial class SettingsWindow : Window
         try
         {
             _security.UpdateSmtp(input);
-            SetStatus(SmtpStatusText, "Configurações de e-mail salvas.", false);
+            SetStatus(SmtpStatusText, Loc.T("settings_status_email_saved"), false);
         }
         catch (Exception ex)
         {
@@ -124,7 +156,7 @@ public partial class SettingsWindow : Window
 
         if (!SecurityService.IsValidEmail(_security.Email))
         {
-            SetStatus(SmtpStatusText, "O e-mail da conta é inválido.", true);
+            SetStatus(SmtpStatusText, Loc.T("settings_err_account_email"), true);
             return;
         }
 
@@ -140,17 +172,17 @@ public partial class SettingsWindow : Window
 
         if (!_security.TryGetSmtpOptions(out var options))
         {
-            SetStatus(SmtpStatusText, "As configurações de e-mail não estão completas.", true);
+            SetStatus(SmtpStatusText, Loc.T("settings_err_email_incomplete"), true);
             return;
         }
 
         TestSmtpButton.IsEnabled = false;
-        SetStatus(SmtpStatusText, "Enviando e-mail de teste...", false);
+        SetStatus(SmtpStatusText, Loc.T("settings_status_test_sending"), false);
 
         try
         {
             await _email.SendTestAsync(options, _security.Email);
-            SetStatus(SmtpStatusText, "Teste enviado. Verifique sua caixa de entrada.", false);
+            SetStatus(SmtpStatusText, Loc.T("settings_status_test_sent"), false);
         }
         catch (Exception ex)
         {
@@ -169,14 +201,14 @@ public partial class SettingsWindow : Window
         string host = SmtpHostBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(host))
         {
-            SetStatus(SmtpStatusText, "Informe o servidor SMTP do seu provedor de e-mail.", true);
+            SetStatus(SmtpStatusText, Loc.T("settings_err_smtp_host"), true);
             SmtpHostBox.Focus();
             return false;
         }
 
         if (!int.TryParse(SmtpPortBox.Text.Trim(), out int port) || port < 1 || port > 65535)
         {
-            SetStatus(SmtpStatusText, "Informe uma porta SMTP válida (normalmente 587).", true);
+            SetStatus(SmtpStatusText, Loc.T("settings_err_smtp_port"), true);
             SmtpPortBox.Focus();
             return false;
         }
@@ -210,15 +242,15 @@ public partial class SettingsWindow : Window
 
         if (password.Length < 8)
         {
-            SetStatus(BackupStatusText, "A senha do backup precisa ter pelo menos 8 caracteres.", true);
+            SetStatus(BackupStatusText, Loc.T("settings_err_backup_password_length"), true);
             BackupPasswordBox.Focus();
             return;
         }
 
         var dialog = new SaveFileDialog
         {
-            Title = "Exportar banco de dados do Pauth40",
-            Filter = "Backup do Pauth40 (*.pauth40)|*.pauth40|Todos os arquivos (*.*)|*.*",
+            Title = Loc.T("settings_dialog_export_title"),
+            Filter = Loc.T("settings_dialog_filter"),
             DefaultExt = ".pauth40",
             AddExtension = true,
             OverwritePrompt = true,
@@ -231,7 +263,7 @@ public partial class SettingsWindow : Window
         try
         {
             BackupService.Export(dialog.FileName, _viewModel.Accounts, password);
-            SetStatus(BackupStatusText, $"Backup criado em {dialog.FileName}.", false);
+            SetStatus(BackupStatusText, Loc.Format("settings_status_backup_created", dialog.FileName), false);
         }
         catch (Exception ex)
         {
@@ -245,8 +277,8 @@ public partial class SettingsWindow : Window
 
         var dialog = new OpenFileDialog
         {
-            Title = "Importar banco de dados do Pauth40",
-            Filter = "Backup do Pauth40 (*.pauth40)|*.pauth40|Todos os arquivos (*.*)|*.*",
+            Title = Loc.T("settings_dialog_import_title"),
+            Filter = Loc.T("settings_dialog_filter"),
             CheckFileExists = true
         };
 
@@ -264,15 +296,15 @@ public partial class SettingsWindow : Window
                 SetStatus(
                     BackupStatusText,
                     added == 1
-                        ? "1 conta importada para o cofre."
-                        : $"{added} contas importadas para o cofre.",
+                        ? Loc.T("settings_import_one")
+                        : Loc.Format("settings_import_many", added),
                     false);
             }
             else
             {
                 SetStatus(
                     BackupStatusText,
-                    "Nenhuma conta nova foi encontrada no backup.",
+                    Loc.T("settings_import_none"),
                     false);
             }
         }

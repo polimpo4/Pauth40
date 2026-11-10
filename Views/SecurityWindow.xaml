@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
-        Title="Pauth40 - Segurança"
+        xmlns:loc="clr-namespace:Pauth40.Localization"
+        Title="{loc:Loc security_title}"
         Icon="pack://application:,,,/Assets/app.ico"
         Width="570" Height="760"
         WindowStyle="None"
@@ -41,22 +42,33 @@
                       StrokeThickness="1.7"
                       Width="21" Height="21" />
                 <TextBlock x:Name="WindowTitleText"
-                           Text="Pauth40 - Segurança"
+                           Text="{loc:Loc security_title}"
                            Style="{StaticResource WindowTitleText}"
                            FontSize="15.5"
                            Margin="10,0,0,0"
                            VerticalAlignment="Center" />
             </StackPanel>
 
-            <Button Style="{StaticResource CloseTitleBarButton}"
-                    HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"
-                    ToolTip="Fechar" Click="Close_Click" AutomationProperties.Name="Fechar">
-                <Path Data="{StaticResource IconClose}"
-                      Stroke="{StaticResource TextSecondaryBrush}"
-                      StrokeThickness="1.6"
-                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                      Width="13" Height="13" Stretch="Uniform" />
-            </Button>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                <ComboBox x:Name="LanguageCombo"
+                          Width="188" Height="32"
+                          Margin="0,0,8,0"
+                          Style="{StaticResource LanguageComboBox}"
+                          DisplayMemberPath="DisplayName"
+                          SelectionChanged="LanguageCombo_SelectionChanged"
+                          AutomationProperties.Name="{loc:Loc common_language}" />
+                <Button Style="{StaticResource CloseTitleBarButton}"
+                        VerticalAlignment="Center"
+                        ToolTip="{loc:Loc common_close}" Click="Close_Click"
+                        AutomationProperties.Name="{loc:Loc common_close}">
+                    <Path Data="{StaticResource IconClose}"
+                          Stroke="{StaticResource TextSecondaryBrush}"
+                          StrokeThickness="1.6"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                          Width="13" Height="13" Stretch="Uniform" />
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- ============================================================ CONTENT -->
@@ -68,36 +80,36 @@
             <Grid>
                 <!-- ==================================================== SETUP -->
                 <StackPanel x:Name="SetupPanel" Visibility="Collapsed">
-                    <TextBlock Text="Proteja seu cofre"
+                    <TextBlock Text="{loc:Loc security_setup_heading}"
                                Style="{StaticResource SectionHeading}"
                                FontSize="27" />
-                    <TextBlock Text="Defina a senha e o e-mail usados para abrir o Pauth40. O código de recuperação de senha é enviado para esse e-mail."
+                    <TextBlock Text="{loc:Loc security_setup_subtitle}"
                                Style="{StaticResource BodyText}"
                                TextWrapping="Wrap"
                                Margin="0,9,0,24" />
 
-                    <TextBlock Text="E-MAIL" Style="{StaticResource FieldLabel}" />
+                    <TextBlock Text="{loc:Loc common_email}" Style="{StaticResource FieldLabel}" />
                     <TextBox x:Name="SetupEmailBox"
                              Style="{StaticResource FieldTextBox}"
                              MaxLength="254"
                              LostFocus="SetupEmail_LostFocus"
-                             AutomationProperties.Name="E-mail" />
+                             AutomationProperties.Name="{loc:Loc common_email}" />
 
-                    <TextBlock Text="SENHA" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
+                    <TextBlock Text="{loc:Loc common_password}" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
                     <PasswordBox x:Name="SetupPasswordBox"
                                  Style="{StaticResource FieldPasswordBox}"
                                  MaxLength="128"
-                                 AutomationProperties.Name="Senha" />
+                                 AutomationProperties.Name="{loc:Loc common_password}" />
 
-                    <TextBlock Text="CONFIRMAR SENHA" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
+                    <TextBlock Text="{loc:Loc common_confirm_password}" Style="{StaticResource FieldLabel}" Margin="2,16,0,6" />
                     <PasswordBox x:Name="SetupConfirmBox"
                                  Style="{StaticResource FieldPasswordBox}"
                                  MaxLength="128"
-                                 AutomationProperties.Name="Confirmar senha" />
+                                 AutomationProperties.Name="{loc:Loc common_confirm_password}" />
 
                     <CheckBox x:Name="SetupSmtpCheckBox"
                               Style="{StaticResource FieldCheckBox}"
-                              Content="Configurar o envio de e-mail agora (recomendado)"
+                              Content="{loc:Loc security_setup_smtp_check}"
                               Margin="0,20,0,0"
                               Checked="SetupSmtp_Checked"
                               Unchecked="SetupSmtp_Unchecked" />
@@ -109,28 +121,28 @@
                                 <ColumnDefinition Width="104" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock Text="SERVIDOR SMTP" Style="{StaticResource FieldLabel}" />
+                                <TextBlock Text="{loc:Loc common_smtp_server}" Style="{StaticResource FieldLabel}" />
                                 <TextBox x:Name="SetupSmtpHostBox" Style="{StaticResource FieldTextBox}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                <TextBlock Text="PORTA" Style="{StaticResource FieldLabel}" />
+                                <TextBlock Text="{loc:Loc common_port}" Style="{StaticResource FieldLabel}" />
                                 <TextBox x:Name="SetupSmtpPortBox" Style="{StaticResource FieldTextBox}" Text="587" />
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="USUÁRIO SMTP" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <TextBlock Text="{loc:Loc common_smtp_user}" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
                         <TextBox x:Name="SetupSmtpUserBox" Style="{StaticResource FieldTextBox}" />
 
-                        <TextBlock Text="SENHA DE APP" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <TextBlock Text="{loc:Loc common_app_password}" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
                         <PasswordBox x:Name="SetupSmtpPasswordBox" Style="{StaticResource FieldPasswordBox}" MaxLength="128" />
 
                         <CheckBox x:Name="SetupSmtpSslCheckBox"
                                   Style="{StaticResource FieldCheckBox}"
-                                  Content="Usar SSL/TLS (recomendado)"
+                                  Content="{loc:Loc common_use_ssl_recommended}"
                                   IsChecked="True"
                                   Margin="0,14,0,0" />
 
-                        <TextBlock Text="Em Gmail, Outlook e iCloud use uma senha de app, não a senha normal da conta."
+                        <TextBlock Text="{loc:Loc security_setup_smtp_note}"
                                    Style="{StaticResource MutedText}"
                                    TextWrapping="Wrap"
                                    Margin="0,10,0,0" />
@@ -147,13 +159,13 @@
                             Height="48"
                             Margin="0,20,0,0"
                             Click="Setup_Click"
-                            AutomationProperties.Name="Criar cofre protegido">
+                            AutomationProperties.Name="{loc:Loc security_setup_create}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Path Data="{StaticResource IconLock}"
                                   Style="{StaticResource LineIcon}"
                                   Stroke="#F7FDFF" StrokeThickness="1.8"
                                   Width="19" Height="19" />
-                            <TextBlock Text="Criar cofre protegido"
+                            <TextBlock Text="{loc:Loc security_setup_create}"
                                        Style="{StaticResource ButtonLabel}"
                                        FontSize="17"
                                        Margin="10,0,0,0"
@@ -164,17 +176,17 @@
 
                 <!-- ==================================================== UNLOCK -->
                 <StackPanel x:Name="UnlockPanel" Visibility="Collapsed">
-                    <TextBlock Text="Bem-vindo de volta"
+                    <TextBlock Text="{loc:Loc security_unlock_heading}"
                                Style="{StaticResource SectionHeading}"
                                FontSize="27" />
-                    <TextBlock Text="Digite sua senha para desbloquear o cofre de autenticação."
+                    <TextBlock Text="{loc:Loc security_unlock_subtitle}"
                                Style="{StaticResource BodyText}"
                                TextWrapping="Wrap"
                                Margin="0,9,0,22" />
 
                     <Border Style="{StaticResource SectionCard}" Padding="16,13" Margin="0,0,0,18">
                         <StackPanel>
-                            <TextBlock Text="E-MAIL ASSOCIADO" Style="{StaticResource FieldLabel}" Margin="2,0,0,5" />
+                            <TextBlock Text="{loc:Loc security_unlock_email_label}" Style="{StaticResource FieldLabel}" Margin="2,0,0,5" />
                             <TextBlock x:Name="UnlockEmailText"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        FontFamily="Segoe UI Variable Text, Segoe UI"
@@ -184,12 +196,12 @@
                         </StackPanel>
                     </Border>
 
-                    <TextBlock Text="SENHA" Style="{StaticResource FieldLabel}" />
+                    <TextBlock Text="{loc:Loc common_password}" Style="{StaticResource FieldLabel}" />
                     <PasswordBox x:Name="UnlockPasswordBox"
                                  Style="{StaticResource FieldPasswordBox}"
                                  MaxLength="128"
                                  KeyDown="UnlockPassword_KeyDown"
-                                 AutomationProperties.Name="Senha" />
+                                 AutomationProperties.Name="{loc:Loc common_password}" />
 
                     <TextBlock x:Name="UnlockErrorText"
                                Foreground="{StaticResource DangerBrush}"
@@ -203,13 +215,13 @@
                             Margin="0,18,0,0"
                             IsDefault="True"
                             Click="Unlock_Click"
-                            AutomationProperties.Name="Desbloquear">
+                            AutomationProperties.Name="{loc:Loc security_unlock_button}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Path Data="{StaticResource IconLock}"
                                   Style="{StaticResource LineIcon}"
                                   Stroke="#F7FDFF" StrokeThickness="1.8"
                                   Width="19" Height="19" />
-                            <TextBlock Text="Desbloquear"
+                            <TextBlock Text="{loc:Loc security_unlock_button}"
                                        Style="{StaticResource ButtonLabel}"
                                        FontSize="17"
                                        Margin="10,0,0,0"
@@ -218,7 +230,7 @@
                     </Button>
 
                     <Button Style="{StaticResource LinkButton}"
-                            Content="Esqueci minha senha"
+                            Content="{loc:Loc security_unlock_forgot}"
                             HorizontalAlignment="Center"
                             Margin="0,16,0,0"
                             Click="Forgot_Click" />
@@ -226,7 +238,7 @@
 
                 <!-- ==================================================== RESET -->
                 <StackPanel x:Name="ResetPanel" Visibility="Collapsed">
-                    <TextBlock Text="Recuperar acesso"
+                    <TextBlock Text="{loc:Loc security_reset_heading}"
                                Style="{StaticResource SectionHeading}"
                                FontSize="27" />
                     <TextBlock x:Name="ResetSubtitleText"
@@ -239,14 +251,14 @@
                                 Style="{StaticResource SecondaryButton}"
                                 Height="46"
                                 Click="SendCode_Click"
-                                AutomationProperties.Name="Enviar código por e-mail">
+                                AutomationProperties.Name="{loc:Loc security_reset_send_code}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Path Data="{StaticResource IconMail}"
                                       Style="{StaticResource LineIcon}"
                                       Stroke="{StaticResource CyanBrush}"
                                       StrokeThickness="1.6"
                                       Width="18" Height="18" />
-                                <TextBlock Text="Enviar código por e-mail"
+                                <TextBlock Text="{loc:Loc security_reset_send_code}"
                                            Style="{StaticResource ButtonLabel}"
                                            FontSize="15"
                                            Margin="9,0,0,0"
@@ -264,7 +276,7 @@
                         <StackPanel x:Name="ResetSmtpPanel" Visibility="Collapsed" Margin="0,14,0,0">
                             <Border Style="{StaticResource SectionCard}" Padding="16,14">
                                 <StackPanel>
-                                    <TextBlock Text="CONFIGURAÇÃO DE E-MAIL"
+                                    <TextBlock Text="{loc:Loc security_reset_email_config}"
                                                Style="{StaticResource FieldLabel}"
                                                Foreground="{StaticResource CyanBrush}"
                                                Margin="0,0,0,12" />
@@ -275,31 +287,31 @@
                                             <ColumnDefinition Width="104" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel>
-                                            <TextBlock Text="SERVIDOR SMTP" Style="{StaticResource FieldLabel}" />
+                                            <TextBlock Text="{loc:Loc common_smtp_server}" Style="{StaticResource FieldLabel}" />
                                             <TextBox x:Name="ResetSmtpHostBox" Style="{StaticResource FieldTextBox}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <TextBlock Text="PORTA" Style="{StaticResource FieldLabel}" />
+                                            <TextBlock Text="{loc:Loc common_port}" Style="{StaticResource FieldLabel}" />
                                             <TextBox x:Name="ResetSmtpPortBox" Style="{StaticResource FieldTextBox}" Text="587" />
                                         </StackPanel>
                                     </Grid>
 
-                                    <TextBlock Text="USUÁRIO SMTP" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
+                                    <TextBlock Text="{loc:Loc common_smtp_user}" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
                                     <TextBox x:Name="ResetSmtpUserBox" Style="{StaticResource FieldTextBox}" />
 
-                                    <TextBlock Text="SENHA DE APP" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
+                                    <TextBlock Text="{loc:Loc common_app_password}" Style="{StaticResource FieldLabel}" Margin="2,12,0,6" />
                                     <PasswordBox x:Name="ResetSmtpPasswordBox" Style="{StaticResource FieldPasswordBox}" MaxLength="128" />
 
                                     <CheckBox x:Name="ResetSmtpSslCheckBox"
                                               Style="{StaticResource FieldCheckBox}"
-                                              Content="Usar SSL/TLS"
+                                              Content="{loc:Loc common_use_ssl}"
                                               IsChecked="True"
                                               Margin="0,12,0,0" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
 
-                        <TextBlock Text="CÓDIGO RECEBIDO" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
+                        <TextBlock Text="{loc:Loc security_reset_code_label}" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
                         <TextBox x:Name="ResetCodeBox"
                                  Style="{StaticResource FieldTextBox}"
                                  MaxLength="6"
@@ -309,12 +321,12 @@
                     </StackPanel>
 
                     <StackPanel x:Name="ResetPasswordArea">
-                        <TextBlock Text="NOVA SENHA" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
+                        <TextBlock Text="{loc:Loc common_new_password}" Style="{StaticResource FieldLabel}" Margin="2,18,0,6" />
                         <PasswordBox x:Name="ResetPasswordBox"
                                      Style="{StaticResource FieldPasswordBox}"
                                      MaxLength="128" />
 
-                        <TextBlock Text="CONFIRMAR NOVA SENHA" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
+                        <TextBlock Text="{loc:Loc common_confirm_new_password}" Style="{StaticResource FieldLabel}" Margin="2,14,0,6" />
                         <PasswordBox x:Name="ResetConfirmBox"
                                      Style="{StaticResource FieldPasswordBox}"
                                      MaxLength="128" />
@@ -340,13 +352,13 @@
                             Margin="0,18,0,0"
                             IsDefault="True"
                             Click="Reset_Click"
-                            AutomationProperties.Name="Redefinir senha">
+                            AutomationProperties.Name="{loc:Loc security_reset_button}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Path Data="{StaticResource IconKey}"
                                   Style="{StaticResource LineIcon}"
                                   Stroke="#F7FDFF" StrokeThickness="1.8"
                                   Width="19" Height="19" />
-                            <TextBlock Text="Redefinir senha"
+                            <TextBlock Text="{loc:Loc security_reset_button}"
                                        Style="{StaticResource ButtonLabel}"
                                        FontSize="17"
                                        Margin="10,0,0,0"
@@ -357,11 +369,11 @@
                     <StackPanel Orientation="Vertical" Margin="0,14,0,0">
                         <Button x:Name="DpapiResetLink"
                                 Style="{StaticResource LinkButton}"
-                                Content="Redefinir usando esta conta do Windows"
+                                Content="{loc:Loc security_reset_dpapi_link}"
                                 HorizontalAlignment="Center"
                                 Click="UseDpapi_Click" />
                         <Button Style="{StaticResource LinkButton}"
-                                Content="Voltar para o login"
+                                Content="{loc:Loc security_reset_back}"
                                 HorizontalAlignment="Center"
                                 Margin="0,8,0,0"
                                 Click="BackToUnlock_Click" />

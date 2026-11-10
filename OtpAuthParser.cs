@@ -1,4 +1,5 @@
 using OtpNet;
+using Pauth40.Localization;
 
 namespace Pauth40;
 
@@ -11,31 +12,31 @@ internal static class OtpAuthParser
 
         if (string.IsNullOrWhiteSpace(text))
         {
-            error = "The QR code is empty.";
+            error = Loc.T("error_qr_empty");
             return false;
         }
 
         if (!Uri.TryCreate(text.Trim(), UriKind.Absolute, out var uri))
         {
-            error = "The QR code is not a valid URI.";
+            error = Loc.T("error_qr_uri");
             return false;
         }
 
         if (!string.Equals(uri.Scheme, "otpauth", StringComparison.OrdinalIgnoreCase))
         {
-            error = "This QR code is not an authenticator code.";
+            error = Loc.T("error_qr_not_authenticator");
             return false;
         }
 
         var type = uri.Host.ToLowerInvariant();
         if (type == "hotp")
         {
-            error = "Counter-based (HOTP) accounts are not supported.";
+            error = Loc.T("error_qr_hotp");
             return false;
         }
         if (type != "totp")
         {
-            error = "Unsupported authenticator type.";
+            error = Loc.T("error_qr_type");
             return false;
         }
 
@@ -57,7 +58,7 @@ internal static class OtpAuthParser
 
         if (!query.TryGetValue("secret", out var secret) || string.IsNullOrWhiteSpace(secret))
         {
-            error = "The QR code has no secret key.";
+            error = Loc.T("error_qr_no_secret");
             return false;
         }
 
@@ -68,13 +69,13 @@ internal static class OtpAuthParser
             var key = Base32Encoding.ToBytes(secret);
             if (key.Length < 5)
             {
-                error = "The secret key is too short.";
+                error = Loc.T("error_qr_secret_short");
                 return false;
             }
         }
         catch
         {
-            error = "The secret key is not valid Base32.";
+            error = Loc.T("error_qr_secret_base32");
             return false;
         }
 
@@ -102,7 +103,7 @@ internal static class OtpAuthParser
 
         if (string.IsNullOrWhiteSpace(issuer) && string.IsNullOrWhiteSpace(label))
         {
-            issuer = "Authenticator";
+            issuer = Loc.T("account_authenticator");
             label = "";
         }
 

@@ -40,4 +40,16 @@
     <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
+  <!--
+    Languages are plain JSON files. They are embedded as a safety net and also
+    copied next to the executable so the community can edit or add translations
+    without rebuilding the application.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Include="langs\*.json" />
+    <None Update="langs\*.json"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

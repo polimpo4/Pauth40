@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Pauth40.Localization;
 using Pauth40.Services;
 
 namespace Pauth40.ViewModels;
@@ -13,7 +14,7 @@ namespace Pauth40.ViewModels;
 public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 {
     private const string EmptyCode = "------";
-    private const string DefaultCopyLabel = "Copy Code to ClipBoard";
+    private static string DefaultCopyLabel => Loc.T("main_copy");
 
     private readonly AccountStore? _store;
     private readonly ClipboardService _clipboard;
@@ -46,6 +47,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         _isDemo = isDemo;
 
         Accounts.CollectionChanged += OnAccountsChanged;
+
+        LocalizationManager.Instance.LanguageChanged += OnLanguageChanged;
 
         CaptureCommand = new RelayCommand(ExecuteCapture);
         CopyCommand = new RelayCommand(ExecuteCopy, CanCopy);
@@ -182,10 +185,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
     public bool HasSelectedAccount => SelectedAccount is not null;
 
-    public string SelectedAccountName => SelectedAccount?.Name ?? "No accounts yet";
+    public string SelectedAccountName => SelectedAccount?.Name ?? Loc.T("main_empty_name");
 
     public string SelectedAccountSubtitle =>
-        SelectedAccount?.Subtitle ?? "Use Capture Screen to import your first QR code";
+        SelectedAccount?.Subtitle ?? Loc.T("main_empty_subtitle");
 
     public string SelectedAccountInitial => SelectedAccount?.Initial ?? "+";
 
@@ -227,8 +230,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             {
                 SelectedAccount ??= Accounts.FirstOrDefault();
                 RaiseToast(added == 1
-                    ? "Imported 1 account from the legacy 'novos' folder."
-                    : $"Imported {added} accounts from the legacy 'novos' folder.");
+                    ? Loc.T("toast_legacy_one")
+                    : Loc.Format("toast_legacy_many", added));
             }
         }
         catch
@@ -265,11 +268,11 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
         if (added > 0)
         {
-            RaiseToast(added == 1 ? "QR code imported." : $"{added} QR codes imported.");
+            RaiseToast(added == 1 ? Loc.T("toast_qr_one") : Loc.Format("toast_qr_many", added));
         }
         else if (failed > 0)
         {
-            RaiseToast("No valid authenticator QR code was found.");
+            RaiseToast(Loc.T("toast_no_valid_qr"));
         }
     }
 
@@ -359,7 +362,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             string? text = QrDecoder.Decode(bitmap);
             if (string.IsNullOrWhiteSpace(text))
             {
-                RaiseToast($"No QR code found in the {source}.");
+                RaiseToast(Loc.Format("toast_no_qr_in_source", source));
                 return;
             }
 
@@ -370,13 +373,13 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             }
 
             if (AddAccount(account!, select: true))
-                RaiseToast($"Added {account!.Name}.");
+                RaiseToast(Loc.Format("toast_account_added", account!.Name));
             else
-                RaiseToast("This account is already in the vault.");
+                RaiseToast(Loc.T("toast_account_exists"));
         }
         catch
         {
-            RaiseToast("The captured image could not be read.");
+            RaiseToast(Loc.T("toast_image_unreadable"));
         }
     }
 
@@ -396,7 +399,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         }
         catch
         {
-            RaiseToast("Screen capture is not available right now.");
+            RaiseToast(Loc.T("toast_capture_unavailable"));
         }
     }
 
@@ -410,15 +413,15 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         if (_clipboard.TrySetText(CurrentCode))
         {
             IsCopyFeedback = true;
-            CopyButtonText = "Copied!";
-            RaiseToast("Code copied to the clipboard.");
+            CopyButtonText = Loc.T("main_copied");
+            RaiseToast(Loc.T("toast_code_copied"));
 
             _copyResetTimer.Stop();
             _copyResetTimer.Start();
         }
         else
         {
-            RaiseToast("The clipboard is busy. Please try again.");
+            RaiseToast(Loc.T("toast_clipboard_busy"));
         }
     }
 
@@ -443,13 +446,13 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
                 ? null
                 : Accounts[Math.Clamp(index, 0, Accounts.Count - 1)];
 
-            RaiseToast($"Removed {account.Name}.");
+            RaiseToast(Loc.Format("toast_removed", account.Name));
             return;
         }
 
         _pendingRemovalId = account.Id;
         _pendingRemovalUntil = now.AddSeconds(6);
-        RaiseToast($"Click remove again within 6 seconds to delete {account.Name}.");
+        RaiseToast(Loc.Format("toast_remove_confirm", account.Name));
     }
 
     private void BuildTotp()
@@ -597,13 +600,22 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         }
         catch
         {
-            RaiseToast("The vault could not be saved.");
+            RaiseToast(Loc.T("toast_vault_save_error"));
         }
     }
 
     private void RaiseToast(string message)
     {
         ToastRequested?.Invoke(this, message);
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        if (!IsCopyFeedback)
+            CopyButtonText = DefaultCopyLabel;
+
+        OnPropertyChanged(nameof(SelectedAccountName));
+        OnPropertyChanged(nameof(SelectedAccountSubtitle));
     }
 
     private void OnAccountsChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -632,5 +644,6 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         _timer.Tick -= OnTimerTick;
         _copyResetTimer.Stop();
         Accounts.CollectionChanged -= OnAccountsChanged;
+        LocalizationManager.Instance.LanguageChanged -= OnLanguageChanged;
     }
 }

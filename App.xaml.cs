@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using Pauth40.Localization;
 using Pauth40.Services;
 using Pauth40.ViewModels;
 using Pauth40.Views;
@@ -17,6 +18,10 @@ public partial class App : Application
         base.OnStartup(e);
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
+
+        // Load the saved interface language (or detect it from Windows) before
+        // any window is created. The security gate also lets the user change it.
+        LocalizationManager.Instance.Initialize();
 
         var services = new ServiceCollection();
         services.AddSingleton<AccountStore>();

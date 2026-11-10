@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Pauth40.Localization;
 
 namespace Pauth40;
 
@@ -22,7 +23,7 @@ public sealed class Account
                 return Issuer.Trim();
             if (!string.IsNullOrWhiteSpace(Label))
                 return Label.Trim();
-            return "Authenticator";
+            return Loc.T("account_authenticator");
         }
     }
 
@@ -39,7 +40,7 @@ public sealed class Account
                 return label;
             }
 
-            return $"TOTP  ·  {Digits} digits  ·  {Period}s";
+            return Loc.Format("account_subtitle", Digits, Period);
         }
     }
 

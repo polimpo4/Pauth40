@@ -1,6 +1,6 @@
 # Pauth40 - Two Factor Authenticator
 
-A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **XAML** and **MVVM**. The interface is a full reconstruction of the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome.
+A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **XAML** and **MVVM**. The interface is a full reconstruction of the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome. The interface ships in **European Portuguese** and **US English**, and the community can add more languages by editing JSON files.
 
 <img src="docs/screenshots/03-main.png" alt="Pauth40 main window" width="820">
 
@@ -11,6 +11,7 @@ Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into l
 - **Local and private** - the vault never leaves your computer; the only network request is an optional recovery/test e-mail that you configure yourself.
 - **Password + e-mail protected** - the app asks for the master password at startup and can recover access through a 6-digit e-mail code.
 - **Portable backups** - export an encrypted `.pauth40` file and import it on another machine.
+- **Community translations** - every interface and e-mail string comes from a JSON file in `langs`; choose the language at startup or in Settings.
 - **Native WPF** - no Electron, no WebView, no embedded browser.
 
 ## Screenshots
@@ -20,9 +21,11 @@ Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into l
 | <img src="docs/screenshots/01-setup.png" alt="First-run password setup" width="380"> | <img src="docs/screenshots/02-unlock.png" alt="Unlock screen" width="380"> |
 | Define the master password and the recovery e-mail. | The associated e-mail is shown masked; recovery is one click away. |
 
+Each security screen shows the language selector in the title bar, so the language can be changed before the vault is unlocked. The screenshots use US English; European Portuguese is the reference language.
+
 <img src="docs/screenshots/04-settings.png" alt="Settings window" width="720">
 
-Settings hold the password change, SMTP/e-mail recovery configuration and the encrypted database export/import.
+Settings hold the password change, SMTP/e-mail recovery configuration, the language selector and the encrypted database export/import.
 
 ## Features
 
@@ -38,6 +41,18 @@ Settings hold the password change, SMTP/e-mail recovery configuration and the en
 - Automatic, best-effort import of the original app's `novos\*.png` QR folder.
 - **Settings window** (gear in the title bar): change the master password, configure/test SMTP, export and import the database.
 - Resizable custom window: drag the title bar, double-click to maximize/restore, DPI-aware layout, Windows 11 rounded corners and dark DWM frame.
+
+## Languages
+
+The interface is translated at runtime from plain JSON files in [`langs`](langs). European Portuguese (`pt-PT`) is the reference language and US English (`en-US`) is the built-in fallback. A language file on disk overrides the embedded copy with the same `code`, so translations can be edited or added without rebuilding the app.
+
+- On first run the app follows the Windows UI language: Portuguese Windows opens in `pt-PT`, other systems open in `en-US` when available.
+- The language selector is in the title bar of the security screen (first-run setup, unlock and recovery) and in **Settings → Language**.
+- Changing the language updates every open window immediately and is saved to `%LOCALAPPDATA%\Pauth40\language.json` (or `%PAUTH40_DATA_DIR%\language.json`).
+- Missing keys fall back to `pt-PT`, then `en-US`, so incomplete translations never show blank labels.
+- Files are loaded from the embedded resources, from `langs` next to `Pauth40.exe`, and from `%LOCALAPPDATA%\Pauth40\langs`.
+
+To add a language, copy `langs/en-US.json` to `langs/<code>.json` (for example `fr-FR.json`), translate the values and keep the keys and `{0}` placeholders unchanged. See [`langs/README.md`](langs/README.md) for the full translator guide and contribution workflow.
 
 ## Security
 
@@ -69,10 +84,10 @@ The self-contained, single-file executable is written to `dist\Pauth40.exe`.
 
 ### First launch
 
-1. Start `Pauth40.exe`.
-2. On the **Proteja seu cofre** screen, enter the e-mail that will receive password-recovery codes, then define and confirm a master password (minimum 8 characters).
-3. Optionally enable **Configurar o envio de e-mail agora** and fill in your SMTP server, port, user and app password. Provider defaults are filled automatically for Gmail, Outlook, Yahoo, iCloud, Zoho and GMX. You can also do this later in **Configurações**.
-4. Click **Criar cofre protegido**. An existing legacy DPAPI vault is migrated automatically and a `accounts.dat.legacy.bak` copy is kept.
+1. Start `Pauth40.exe`. Use the language selector in the title bar to change the interface language.
+2. On the **Protect your vault** screen (`Proteja o seu cofre` in Portuguese), enter the e-mail that will receive password-recovery codes, then define and confirm a master password (minimum 8 characters).
+3. Optionally enable **Set up email delivery now** and fill in your SMTP server, port, user and app password. Provider defaults are filled automatically for Gmail, Outlook, Yahoo, iCloud, Zoho and GMX. You can also do this later in **Settings**.
+4. Click **Create protected vault**. An existing legacy DPAPI vault is migrated automatically and a `accounts.dat.legacy.bak` copy is kept.
 
 ### Daily use
 
@@ -88,11 +103,12 @@ Open the gear icon in the title bar to:
 
 - change the master password (current password + new password confirmation);
 - configure the SMTP server and send a test e-mail;
+- switch the interface language;
 - export a password-protected `.pauth40` backup, or import one and merge its accounts.
 
 ### Forgot the password
 
-On the unlock screen click **Esqueci minha senha**:
+On the unlock screen click **I forgot my password** (`Esqueci a minha senha`):
 
 - **E-mail code** - send a 6-digit code to the associated address (valid for 10 minutes, at most 5 attempts), enter it and define a new password. If no SMTP server is saved yet, the reset screen lets you configure one inline.
 - **Reset using this Windows account** - use the DPAPI recovery copy to define a new password without e-mail. This works only on the same Windows user that created the vault; on another computer or user account, use the e-mail code instead.
@@ -134,6 +150,8 @@ Views\CaptureOverlayWindow.*    full-screen QR selection overlay
 Controls\CircularCountdown.cs   twin TOTP arcs
 Services\                       clipboard, capture, e-mail, commands
 Themes\PauthTheme.xaml          palette, brushes, control templates
+Localization\                   loader, XAML markup extension and Loc helpers
+langs\                          pt-PT / en-US JSON translations + translator guide
 Account.cs                      account model
 AccountStore.cs                 AES-GCM keyed vault + legacy DPAPI migration
 SecurityService.cs              password verifier, key wrapping, DPAPI reset, SMTP, backups

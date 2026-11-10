@@ -2,6 +2,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Pauth40.Localization;
 
 namespace Pauth40;
 
@@ -47,7 +48,7 @@ public sealed class AccountStore
     {
         ArgumentNullException.ThrowIfNull(key);
         if (key.Length != 32)
- throw new ArgumentException("The vault key must be 32 bytes.", nameof(key));
+ throw new ArgumentException(Loc.T("error_vault_key_size"), nameof(key));
         _key = key.ToArray();
     }
 
@@ -68,7 +69,7 @@ public sealed class AccountStore
             if (IsKeyed(raw))
             {
                 if (_key is null)
-                    throw new InvalidOperationException("The account vault is locked.");
+                    throw new InvalidOperationException(Loc.T("error_vault_locked"));
 
                 jsonBytes = DecryptKeyed(raw);
             }
@@ -184,7 +185,7 @@ public sealed class AccountStore
     {
         int minimum = KeyedMagic.Length + NonceSize + TagSize;
         if (raw.Length < minimum)
-            throw new InvalidDataException("The account vault is damaged.");
+            throw new InvalidDataException(Loc.T("error_vault_damaged"));
 
         ReadOnlySpan<byte> nonce = raw.AsSpan(KeyedMagic.Length, NonceSize);
         ReadOnlySpan<byte> tag = raw.AsSpan(KeyedMagic.Length + NonceSize, TagSize);

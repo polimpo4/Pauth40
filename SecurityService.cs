@@ -3,6 +3,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Pauth40.Localization;
 
 namespace Pauth40;
 
@@ -99,7 +100,7 @@ public sealed class SecurityService
     public static void ValidatePassword(string password)
     {
         if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
-            throw new ArgumentException("A senha precisa ter pelo menos 8 caracteres.");
+            throw new ArgumentException(Loc.T("error_password_min"));
     }
 
     /// <summary>
@@ -109,10 +110,10 @@ public sealed class SecurityService
     public void CreateAccount(string email, string password, SmtpInput? smtp = null)
     {
         if (IsConfigured)
-            throw new InvalidOperationException("A senha já foi configurada.");
+            throw new InvalidOperationException(Loc.T("error_already_configured"));
 
         if (!IsValidEmail(email))
-            throw new ArgumentException("Informe um endereço de e-mail válido.");
+            throw new ArgumentException(Loc.T("error_invalid_email"));
 
         ValidatePassword(password);
 
@@ -195,7 +196,7 @@ public sealed class SecurityService
         ValidatePassword(newPassword);
 
         if (!Unlock(currentPassword) || _vaultKey is null)
-            throw new InvalidOperationException("A senha atual está incorreta.");
+            throw new InvalidOperationException(Loc.T("error_current_password"));
 
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         var (verifier, kek) = DerivePasswordKeys(newPassword, salt, DefaultIterations);
@@ -228,11 +229,11 @@ public sealed class SecurityService
         catch
         {
             throw new InvalidOperationException(
-                "Não foi possível recuperar o cofre nesta conta do Windows.");
+                Loc.T("error_dpapi_recover"));
         }
 
         if (vaultKey.Length != KeySize)
-            throw new InvalidOperationException("A chave de recuperação é inválida.");
+            throw new InvalidOperationException(Loc.T("error_recovery_key_invalid"));
 
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         var (verifier, kek) = DerivePasswordKeys(newPassword, salt, DefaultIterations);
@@ -452,7 +453,7 @@ public sealed class SecurityService
     {
         int minimum = NonceSize + TagSize;
         if (wrapped.Length < minimum)
-            throw new InvalidDataException("The wrapped vault key is damaged.");
+            throw new InvalidDataException(Loc.T("error_wrapped_key_damaged"));
 
         ReadOnlySpan<byte> nonce = wrapped.AsSpan(0, NonceSize);
         ReadOnlySpan<byte> tag = wrapped.AsSpan(NonceSize, TagSize);
@@ -525,11 +526,11 @@ public static class BackupService
         if (payload.Length < minimum ||
             !payload.AsSpan(0, Magic.Length).SequenceEqual(Magic))
         {
-            throw new InvalidDataException("Este não é um backup válido do Pauth40.");
+            throw new InvalidDataException(Loc.T("error_backup_invalid"));
         }
 
         if (payload[Magic.Length] != Version)
-            throw new InvalidDataException("A versão deste backup não é suportada.");
+            throw new InvalidDataException(Loc.T("error_backup_version"));
 
         int offset = Magic.Length + 1;
         byte[] salt = payload.AsSpan(offset, SaltSize).ToArray();
@@ -550,17 +551,17 @@ public static class BackupService
         }
         catch (CryptographicException)
         {
-            throw new InvalidDataException("Senha do backup incorreta ou arquivo corrompido.");
+            throw new InvalidDataException(Loc.T("error_backup_password"));
         }
 
         var accounts = JsonSerializer.Deserialize<List<Account>>(plaintext);
         if (accounts is null)
-            throw new InvalidDataException("O backup não contém contas válidas.");
+            throw new InvalidDataException(Loc.T("error_backup_no_accounts"));
 
         foreach (var account in accounts)
         {
             if (string.IsNullOrWhiteSpace(account.Secret))
-                throw new InvalidDataException("O backup contém uma conta inválida.");
+                throw new InvalidDataException(Loc.T("error_backup_invalid_account"));
         }
 
         return accounts;
