@@ -83,7 +83,7 @@ The self-contained, single-file executable is written to `dist\Pauth40.exe`.
 
 ## Version and updates
 
-The version shown in the footer of every window is read from the assembly metadata (`<Version>` in `Pauth40.csproj`), so it is never hardcoded. The current build is `2.0.0` and the footer displays `v2.0.0`.
+The version shown in the footer of every window is read from the assembly metadata (`<Version>` in `Pauth40.csproj`), so it is never hardcoded. The current build is `2.1.0` and the footer displays `v2.1.0`.
 
 On startup, after the security window is visible, Pauth40 queries the latest **public** GitHub release in the background:
 
@@ -91,15 +91,15 @@ On startup, after the security window is visible, Pauth40 queries the latest **p
 https://api.github.com/repos/polimpo4/Pauth40/releases/latest
 ```
 
-If the release tag (for example `v2.1.0`) is a higher semantic version than the installed one, a mandatory update window opens on top of the app. The user can update now or exit; the old build cannot continue to be used.
+If the release tag (for example `v2.2.0`) is a higher semantic version than the installed one, a mandatory update window opens on top of the app. The user can update now or exit; the old build cannot continue to be used.
 
 **Update now** downloads the first `.exe` asset from the release (preferring a file whose name contains `Pauth40`) and validates HTTPS/loopback, the advertised size, the `sha256:` digest when GitHub exposes one and the Windows `MZ` header. A hidden PowerShell helper then waits for Pauth40 to close, replaces `Pauth40.exe`, relaunches the new build and deletes the temporary download. The app must be installed in a folder where the current user can write, and the executable must keep the name `Pauth40.exe`.
 
 To publish an update:
 
-1. Increase `<Version>` in `Pauth40.csproj` (for example to `2.1.0`).
+1. Increase `<Version>` in `Pauth40.csproj` (for example to `2.2.0`).
 2. Run `.\build.ps1 -Publish`.
-3. Create a GitHub release with the matching tag (`v2.1.0`), attach `dist\Pauth40.exe` as an asset and publish it. The release body is shown as release notes in the update window.
+3. Create a GitHub release with the matching tag (`v2.2.0`), attach `dist\Pauth40.exe` as an asset and publish it. The release body is shown as release notes in the update window.
 4. Do not mark the release as a draft or pre-release; the updater ignores both.
 
 The repository and its releases must be publicly readable for anonymous update checks. For a private repository, set `PAUTH40_GITHUB_TOKEN` before starting the app, or point `PAUTH40_UPDATE_URL` at a GitHub-compatible JSON feed. `PAUTH40_SKIP_UPDATE_CHECK=1` disables the startup check, which is useful for offline testing.
