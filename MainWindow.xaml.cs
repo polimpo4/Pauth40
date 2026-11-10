@@ -41,6 +41,8 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
+        VersionText.Text = AppVersion.Display;
+
         DataContext = viewModel;
         viewModel.CaptureProvider = () => _captureService.CaptureAsync(this);
         viewModel.ToastRequested += OnToastRequested;

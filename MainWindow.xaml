@@ -159,7 +159,8 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <Button Style="{StaticResource TitleBarButton}" ToolTip="{loc:Loc common_settings}"
-                        Click="Settings_Click" AutomationProperties.Name="{loc:Loc common_settings}">
+                        Click="Settings_Click" AutomationProperties.Name="{loc:Loc common_settings}"
+                        AutomationProperties.AutomationId="SettingsButton">
                     <Path Data="{StaticResource IconSettings}"
                           Style="{StaticResource LineIcon}"
                           Stroke="{StaticResource TextSecondaryBrush}"
@@ -346,6 +347,8 @@
                         Margin="0,24,0,0"
                         Style="{StaticResource PrimaryButton}"
                         Command="{Binding CaptureCommand}"
+                        AutomationProperties.AutomationId="CaptureButton"
+                        AutomationProperties.Name="{loc:Loc main_capture}"
                         ToolTip="{loc:Loc main_capture_tooltip}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Path Data="{StaticResource IconCamera}"
@@ -416,6 +419,15 @@
                            VerticalAlignment="Center" />
                 <Border Width="150" Height="1" Margin="14,0,0,0" Background="{StaticResource FooterLineBrush}" />
             </StackPanel>
+
+            <TextBlock x:Name="VersionText"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="0,0,22,0"
+                       Foreground="{StaticResource TextMutedBrush}"
+                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                       FontSize="11.5"
+                       AutomationProperties.AutomationId="VersionText" />
         </Grid>
 
         <!-- ================================================================ WINDOW FRAME -->

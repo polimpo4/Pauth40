@@ -29,6 +29,8 @@ public partial class SettingsWindow : Window
 
         InitializeComponent();
 
+        VersionText.Text = AppVersion.Display;
+
         Height = Math.Min(820, Math.Max(560, SystemParameters.WorkArea.Height - 48));
 
         InitializeLanguageSelector();

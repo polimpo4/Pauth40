@@ -23,6 +23,8 @@ public partial class CaptureOverlayWindow : Window, IDisposable
 
         InitializeComponent();
 
+        VersionText.Text = AppVersion.Display;
+
         ScreenImage.Source = ToImageSource(screenshot);
 
         Left = SystemParameters.VirtualScreenLeft;

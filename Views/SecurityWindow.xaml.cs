@@ -37,6 +37,8 @@ public partial class SecurityWindow : Window
 
         InitializeComponent();
 
+        VersionText.Text = AppVersion.Display;
+
         InitializeLanguageSelector();
 
         _maxHeight = Math.Max(520, SystemParameters.WorkArea.Height - 48);

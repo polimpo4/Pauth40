@@ -12,6 +12,8 @@ namespace Pauth40;
 public partial class App : Application
 {
     private ServiceProvider? _provider;
+    private readonly CancellationTokenSource _updateCts = new();
+    private int _updateWindowShown;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -29,6 +31,7 @@ public partial class App : Application
         services.AddSingleton<EmailService>();
         services.AddSingleton<ClipboardService>();
         services.AddSingleton<CaptureService>();
+        services.AddSingleton<UpdateService>();
         services.AddSingleton<MainViewModel>();
         _provider = services.BuildServiceProvider();
 
@@ -48,6 +51,11 @@ public partial class App : Application
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         var gate = new SecurityWindow(security, emailService);
         MainWindow = gate;
+
+        // The check runs in the background so an offline computer opens the
+        // vault immediately. If a newer release exists, the update window is
+        // shown on top of the current window and cannot be dismissed.
+        gate.Loaded += (_, _) => StartUpdateCheck();
 
         bool? authenticated;
         try
@@ -86,6 +94,57 @@ public partial class App : Application
             WriteStartupError(ex);
             Shutdown(1);
         }
+    }
+
+    private void StartUpdateCheck()
+    {
+        if (string.Equals(
+                Environment.GetEnvironmentVariable("PAUTH40_SKIP_UPDATE_CHECK"),
+                "1",
+                StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _ = CheckForUpdatesAsync();
+    }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        try
+        {
+            UpdateInfo? update = await _provider!
+                .GetRequiredService<UpdateService>()
+                .CheckForUpdateAsync(_updateCts.Token)
+                .ConfigureAwait(false);
+
+            if (update is null || _updateCts.IsCancellationRequested)
+                return;
+
+            await Dispatcher.InvokeAsync(() => ShowUpdateWindow(update));
+        }
+        catch
+        {
+            // Update checks must never interfere with opening the vault.
+        }
+    }
+
+    private void ShowUpdateWindow(UpdateInfo update)
+    {
+        if (Interlocked.Exchange(ref _updateWindowShown, 1) != 0)
+            return;
+
+        var service = _provider!.GetRequiredService<UpdateService>();
+        Window? owner = Windows
+            .OfType<Window>()
+            .FirstOrDefault(window => window.IsVisible);
+
+        var window = new UpdateWindow(update, service);
+
+        if (owner is not null && owner.IsLoaded && !ReferenceEquals(owner, window))
+            window.Owner = owner;
+
+        window.ShowDialog();
     }
 
     private void StartPreview(string outputPath)
@@ -155,6 +214,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _updateCts.Cancel();
+        _updateCts.Dispose();
         _provider?.GetService<SecurityService>()?.LockKey();
         _provider?.Dispose();
         base.OnExit(e);

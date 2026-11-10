@@ -65,8 +65,9 @@ Keys are lowercase and use underscores, grouped by prefix:
 | `settings_` | Settings window and the export/import dialogs. |
 | `email_` | Subject and body of recovery/test e-mails. |
 | `error_` | Service errors: vault, password, backup, QR parsing, SMTP. |
+| `update_` | Mandatory update window, progress and updater errors. |
 
-The complete list is the `strings` object of `pt-PT.json` (currently 164 keys).
+The complete list is the `strings` object of `pt-PT.json` (currently 188 keys).
 Use it as the source of truth.
 
 ## Placeholders

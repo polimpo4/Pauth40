@@ -8,7 +8,7 @@ A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **X
 
 Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into live **TOTP** codes on your Windows desktop. Accounts are kept in a local vault protected by a master password and encrypted with **AES-256-GCM**; nothing is sent to a cloud service, and there is no telemetry. You can add accounts by capturing a QR code from the screen, by dragging QR image files onto the window, or by importing a legacy `novos` folder. The current code is always one click (or `Ctrl+C`) away.
 
-- **Local and private** - the vault never leaves your computer; the only network request is an optional recovery/test e-mail that you configure yourself.
+- **Local and private** - the vault never leaves your computer; the only network requests are an optional recovery/test e-mail that you configure yourself and the read-only version check against the public GitHub releases feed.
 - **Password + e-mail protected** - the app asks for the master password at startup and can recover access through a 6-digit e-mail code.
 - **Portable backups** - export an encrypted `.pauth40` file and import it on another machine.
 - **Community translations** - every interface and e-mail string comes from a JSON file in `langs`; choose the language at startup or in Settings.
@@ -40,6 +40,7 @@ Settings hold the password change, SMTP/e-mail recovery configuration, the langu
 - Drag and drop QR image files (`.png`, `.jpg`, `.bmp`, `.gif`, `.tif`) onto the window.
 - Automatic, best-effort import of the original app's `novos\*.png` QR folder.
 - **Settings window** (gear in the title bar): change the master password, configure/test SMTP, export and import the database.
+- **Dynamic version footer and forced updates** - every window shows the build version read from the assembly; when a newer public GitHub release exists, a mandatory window downloads it, replaces the executable and relaunches the app.
 - Resizable custom window: drag the title bar, double-click to maximize/restore, DPI-aware layout, Windows 11 rounded corners and dark DWM frame.
 
 ## Languages
@@ -61,7 +62,7 @@ To add a language, copy `langs/en-US.json` to `langs/<code>.json` (for example `
 - A second copy of the vault key is protected with **Windows DPAPI** (`CurrentUser`), which enables password reset on the same Windows user. That copy is what makes the local reset work; it does not exist on another computer or Windows account.
 - Settings in `security.json` contain the password verifier, salt, wrapped vault key, DPAPI recovery blob and SMTP configuration. Passwords and SMTP app passwords are stored only in encrypted form, never in clear text.
 - `accounts.dat` and `.pauth40` backups are authenticated with AES-GCM, so a wrong password or a modified file is rejected instead of silently returning corrupted data.
-- No cloud services, no telemetry, no external requests unless you explicitly send a recovery or test e-mail. The app works offline.
+- No cloud services, no telemetry. The app works offline; the only request made without user action is the read-only version check against the public GitHub releases API, which sends no vault data and fails silently.
 - The reference code (`994195`) and countdown are **not** hardcoded; every value comes from `Otp.NET` and the system clock.
 
 ## Build
@@ -79,6 +80,29 @@ dotnet build .\Pauth40.csproj -c Release
 ```
 
 The self-contained, single-file executable is written to `dist\Pauth40.exe`.
+
+## Version and updates
+
+The version shown in the footer of every window is read from the assembly metadata (`<Version>` in `Pauth40.csproj`), so it is never hardcoded. The current build is `2.0.0` and the footer displays `v2.0.0`.
+
+On startup, after the security window is visible, Pauth40 queries the latest **public** GitHub release in the background:
+
+```
+https://api.github.com/repos/polimpo4/Pauth40/releases/latest
+```
+
+If the release tag (for example `v2.1.0`) is a higher semantic version than the installed one, a mandatory update window opens on top of the app. The user can update now or exit; the old build cannot continue to be used.
+
+**Update now** downloads the first `.exe` asset from the release (preferring a file whose name contains `Pauth40`) and validates HTTPS/loopback, the advertised size, the `sha256:` digest when GitHub exposes one and the Windows `MZ` header. A hidden PowerShell helper then waits for Pauth40 to close, replaces `Pauth40.exe`, relaunches the new build and deletes the temporary download. The app must be installed in a folder where the current user can write, and the executable must keep the name `Pauth40.exe`.
+
+To publish an update:
+
+1. Increase `<Version>` in `Pauth40.csproj` (for example to `2.1.0`).
+2. Run `.\build.ps1 -Publish`.
+3. Create a GitHub release with the matching tag (`v2.1.0`), attach `dist\Pauth40.exe` as an asset and publish it. The release body is shown as release notes in the update window.
+4. Do not mark the release as a draft or pre-release; the updater ignores both.
+
+The repository and its releases must be publicly readable for anonymous update checks. For a private repository, set `PAUTH40_GITHUB_TOKEN` before starting the app, or point `PAUTH40_UPDATE_URL` at a GitHub-compatible JSON feed. `PAUTH40_SKIP_UPDATE_CHECK=1` disables the startup check, which is useful for offline testing.
 
 ## Usage
 
@@ -147,8 +171,12 @@ ViewModels\MainViewModel.cs     accounts, TOTP timer, capture/copy/import comman
 Views\SecurityWindow.*          first-run setup, unlock and password recovery
 Views\SettingsWindow.*          password, SMTP and encrypted database settings
 Views\CaptureOverlayWindow.*    full-screen QR selection overlay
+Views\UpdateWindow.*            mandatory update prompt, progress and retry
 Controls\CircularCountdown.cs   twin TOTP arcs
 Services\                       clipboard, capture, e-mail, commands
+Services\UpdateService.cs       GitHub release check, verified download and self-update
+AppVersion.cs                   dynamic version read from assembly metadata
+SemanticVersion.cs              SemVer parsing and comparison
 Themes\PauthTheme.xaml          palette, brushes, control templates
 Localization\                   loader, XAML markup extension and Loc helpers
 langs\                          pt-PT / en-US JSON translations + translator guide

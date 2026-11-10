@@ -1,0 +1,215 @@
+<Window x:Class="Pauth40.Views.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:loc="clr-namespace:Pauth40.Localization"
+        Title="{loc:Loc update_title}"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Width="660" Height="640"
+        MinWidth="560" MinHeight="520"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="True"
+        Topmost="True"
+        Background="#020B16"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
+        Closing="Window_Closing">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            ResizeBorderThickness="0"
+                            GlassFrameThickness="0"
+                            CornerRadius="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Grid x:Name="RootGrid" ClipToBounds="True" Background="{StaticResource WindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================ TITLE BAR -->
+        <Grid Grid.Row="0" Background="#06111F" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Border VerticalAlignment="Bottom" Height="1" Background="#1B4164" />
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+                <Path Data="{StaticResource IconRefresh}"
+                      Style="{StaticResource LineIcon}"
+                      Stroke="{StaticResource CyanBrush}"
+                      StrokeThickness="1.7"
+                      Width="21" Height="21" />
+                <TextBlock Text="{loc:Loc update_heading}"
+                           Style="{StaticResource WindowTitleText}"
+                           FontSize="15.5"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ============================================================ CONTENT -->
+        <ScrollViewer Grid.Row="1"
+                      Margin="28,20,28,12"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Focusable="False">
+            <StackPanel>
+                <TextBlock Text="{loc:Loc update_heading}"
+                           Style="{StaticResource SectionHeading}"
+                           FontSize="26" />
+
+                <TextBlock Text="{loc:Loc update_message}"
+                           Style="{StaticResource BodyText}"
+                           TextWrapping="Wrap"
+                           Margin="0,9,0,18" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Style="{StaticResource SectionCard}" Padding="16,13" Margin="0,0,7,0">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Loc update_current_label}"
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="2,0,0,5" />
+                            <TextBlock x:Name="CurrentVersionText"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="20"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource SectionCard}" Padding="16,13" Margin="7,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Loc update_latest_label}"
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="2,0,0,5" />
+                            <TextBlock x:Name="LatestVersionText"
+                                       Foreground="{StaticResource CyanBrush}"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="20"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock Text="{loc:Loc update_notes_label}"
+                           Style="{StaticResource FieldLabel}"
+                           Margin="2,18,0,6" />
+
+                <Border Style="{StaticResource SectionCard}" Padding="14,12">
+                    <ScrollViewer Height="118"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Focusable="False">
+                        <TextBlock x:Name="ReleaseNotesText"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                                   FontSize="12.5"
+                                   TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </Border>
+
+                <TextBlock x:Name="StatusText"
+                           Foreground="{StaticResource CyanBrush}"
+                           FontFamily="Segoe UI Variable Text, Segoe UI"
+                           FontSize="12.5"
+                           TextWrapping="Wrap"
+                           Margin="2,14,0,0" />
+
+                <ProgressBar x:Name="DownloadProgress"
+                             Style="{StaticResource CountdownProgress}"
+                             Height="6"
+                             Margin="0,10,0,0"
+                             Visibility="Collapsed" />
+
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="UpdateButton"
+                            Style="{StaticResource PrimaryButton}"
+                            Height="48"
+                            MinWidth="200"
+                            HorizontalAlignment="Left"
+                            Click="Update_Click"
+                            AutomationProperties.AutomationId="UpdateNowButton"
+                            AutomationProperties.Name="{loc:Loc update_now}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Path Data="{StaticResource IconRefresh}"
+                                  Style="{StaticResource LineIcon}"
+                                  Stroke="#F7FDFF"
+                                  StrokeThickness="1.8"
+                                  Width="19" Height="19" />
+                            <TextBlock x:Name="UpdateButtonText"
+                                       Text="{loc:Loc update_now}"
+                                       Style="{StaticResource ButtonLabel}"
+                                       FontSize="17"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="ExitButton"
+                            Grid.Column="1"
+                            Style="{StaticResource SecondaryButton}"
+                            Height="48"
+                            MinWidth="110"
+                            Margin="12,0,0,0"
+                            Click="Exit_Click"
+                            AutomationProperties.AutomationId="ExitButton"
+                            AutomationProperties.Name="{loc:Loc update_exit}">
+                        <TextBlock Text="{loc:Loc update_exit}"
+                                   Style="{StaticResource ButtonLabel}"
+                                   FontSize="15" />
+                    </Button>
+                </Grid>
+
+                <Button x:Name="ReleaseLink"
+                        Style="{StaticResource LinkButton}"
+                        Content="{loc:Loc update_open_release}"
+                        HorizontalAlignment="Center"
+                        Margin="0,14,0,0"
+                        Click="OpenRelease_Click"
+                        AutomationProperties.Name="{loc:Loc update_open_release}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============================================================ FOOTER -->
+        <TextBlock x:Name="VersionText"
+                   Grid.Row="2"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Margin="0,0,18,8"
+                   Foreground="{StaticResource TextMutedBrush}"
+                   FontFamily="Segoe UI Variable Text, Segoe UI"
+                   FontSize="11.5"
+                   AutomationProperties.AutomationId="VersionText" />
+
+        <!-- ============================================================ FRAME -->
+        <Border Grid.RowSpan="3"
+                CornerRadius="12"
+                BorderThickness="1"
+                IsHitTestVisible="False">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#5500D9FF" Offset="0" />
+                    <GradientStop Color="#26007BFF" Offset="0.45" />
+                    <GradientStop Color="#4D0050C8" Offset="1" />
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+    </Grid>
+</Window>

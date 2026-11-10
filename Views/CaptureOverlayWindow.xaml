@@ -87,5 +87,21 @@
                            VerticalAlignment="Center" />
             </StackPanel>
         </Border>
+
+        <Border HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,18,18"
+                Padding="12,6"
+                CornerRadius="9"
+                Background="#D9071A2D"
+                BorderBrush="#6600D9FF"
+                BorderThickness="1"
+                IsHitTestVisible="False">
+            <TextBlock x:Name="VersionText"
+                       Foreground="{StaticResource TextMutedBrush}"
+                       FontFamily="Segoe UI Variable Text, Segoe UI"
+                       FontSize="11.5"
+                       AutomationProperties.AutomationId="VersionText" />
+        </Border>
     </Grid>
 </Window>
