@@ -209,61 +209,81 @@ preview.png                     Latest --render output of the demo vault
 
 ## Proteção legal / Legal protection
 
-Referências legais que sustentam a proteção deste software, a nível internacional e nacional. Para cada jurisdição, indicar o diploma, os artigos aplicáveis e o âmbito de proteção.
+Referências legais que sustentam a proteção deste software, a nível internacional e nacional. Cada entrada liga ao texto oficial do diploma aplicável; os artigos concretos devem ser confirmados caso a caso.
 
-> **A preencher e validar por um jurista.** Esta secção é um índice de trabalho. As entradas abaixo não constituem parecer jurídico e devem ser substituídas pelos textos legais oficiais aplicáveis.
+> **A validar por um jurista.** Esta secção é um índice de referência. As ligações apontam para os textos legais oficiais, mas a qualificação jurídica de cada uso, os artigos exatos e o âmbito de proteção devem ser confirmados por um jurista antes de qualquer ação.
 
-<!-- Formato sugerido: **País:** Lei n.º X/AAAA, artigos Y.º–Z.º — âmbito de proteção. -->
+<!-- Formato: **País (nome nativo):** [Diploma](ligação oficial) — âmbito de proteção. -->
 
 ### Internacional / International
 
-- **Convenções e tratados internacionais:** _[diploma, artigo]_
-- **OMPI / WIPO:** _[diploma, artigo]_
-- **Acordo TRIPS / WTO:** _[diploma, artigo]_
+- **Convenções e tratados internacionais:** [Berne Convention for the Protection of Literary and Artistic Works](https://www.wipo.int/treaties/en/ip/berne/) — obras literárias e artísticas, incluindo programas de computador.
+- **OMPI / WIPO:** [WIPO Copyright Treaty (WCT)](https://www.wipo.int/treaties/en/ip/wct/) — proteção de programas de computador e bases de dados.
+- **OMPI / WIPO:** [Paris Convention for the Protection of Industrial Property](https://www.wipo.int/treaties/en/ip/paris/) — patentes, marcas e propriedade industrial.
+- **OMPI / WIPO:** [Patent Cooperation Treaty (PCT)](https://www.wipo.int/pct/en/) — pedidos internacionais de patente.
+- **Acordo TRIPS / WTO:** [Agreement on Trade-Related Aspects of Intellectual Property Rights](https://www.wto.org/english/docs_e/legal_e/27-trips_01_e.htm) — normas mínimas de propriedade intelectual.
 
 ### Europa / Europe
 
-- **União Europeia:** _[diploma, artigo]_
-- **Portugal:** _[diploma, artigo]_
-- **Espanha:** _[diploma, artigo]_
-- **França:** _[diploma, artigo]_
-- **Alemanha:** _[diploma, artigo]_
-- **Reino Unido:** _[diploma, artigo]_
-- **Outros países:** _[diploma, artigo]_
+- **União Europeia:** [Diretiva 2009/24/CE relativa à proteção jurídica dos programas de computador](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32009L0024) — proteção de software e proibição de cópias não autorizadas.
+- **Portugal:** [Código do Direito de Autor e dos Direitos Conexos (Decreto-Lei n.º 63/85)](https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1985-34444375) — direito de autor e direitos conexos.
+- **Portugal:** [Código da Propriedade Industrial](https://www.wipo.int/wipolex/en/legislation/details/21381) — patentes, marcas e concorrência desleal.
+- **España:** [Texto Refundido de la Ley de Propiedad Intelectual](https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930) — propiedad intelectual.
+- **España:** [Ley de Patentes (Ley 24/2015)](https://www.boe.es/buscar/act.php?id=BOE-A-2015-8328) — patentes e invenções.
+- **France:** [Code de la propriété intellectuelle](https://www.wipo.int/wipolex/en/legislation/details/23227) — droit d'auteur, brevets et propriété industrielle.
+- **Deutschland:** [Urheberrechtsgesetz (UrhG)](https://www.gesetze-im-internet.de/urhg/) — direito de autor e direitos conexos.
+- **Deutschland:** [Patentgesetz (PatG)](https://www.gesetze-im-internet.de/patg/) — patentes e invenções.
+- **United Kingdom:** [Copyright, Designs and Patents Act 1988](https://www.legislation.gov.uk/ukpga/1988/48/contents) — direito de autor, desenhos e patentes.
+- **United Kingdom:** [Patents Act 1977](https://www.legislation.gov.uk/ukpga/1977/37/contents) — patentes e invenções.
 
 ### América do Norte / North America
 
-- **Estados Unidos:** _[diploma, artigo]_
-- **Canadá:** _[diploma, artigo]_
-- **México:** _[diploma, artigo]_
+- **United States:** [Copyright Law, Title 17 of the U.S. Code](https://www.copyright.gov/title17/) — direito de autor, incluindo software.
+- **United States:** [Patent Law, Title 35 of the U.S. Code](https://www.govinfo.gov/app/details/USCODE-2023-title35) — patentes e invenções.
+- **Canada:** [Copyright Act (R.S.C., 1985, c. C-42)](https://laws-lois.justice.gc.ca/eng/acts/C-42/) — direito de autor.
+- **Canada:** [Patent Act (R.S.C., 1985, c. P-4)](https://laws-lois.justice.gc.ca/eng/acts/P-4/) — patentes.
+- **México:** [Ley Federal del Derecho de Autor](https://www.wipo.int/wipolex/en/legislation/details/23966) — derecho de autor y derechos conexos.
+- **México:** [Ley de la Propiedad Industrial](https://www.wipo.int/wipolex/en/legislation/details/23961) — patentes, marcas y propiedad industrial.
 
 ### América do Sul / South America
 
-- **Brasil:** _[diploma, artigo]_
-- **Argentina:** _[diploma, artigo]_
-- **Chile:** _[diploma, artigo]_
-- **Outros países:** _[diploma, artigo]_
+- **Brasil:** [Lei n.º 9.610/1998 — Direitos Autorais](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm) — direito de autor e direitos conexos.
+- **Brasil:** [Lei n.º 9.279/1996 — Propriedade Industrial](https://www.planalto.gov.br/ccivil_03/leis/l9279.htm) — patentes, marcas e concorrência desleal.
+- **Brasil:** [Lei n.º 9.609/1998 — Proteção da Propriedade Intelectual de Programa de Computador](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm) — proteção jurídica de software.
+- **Argentina:** [Ley de Propiedad Intelectual (Ley 11.723)](https://www.wipo.int/wipolex/en/legislation/details/21169) — propiedad intelectual.
+- **Argentina:** [Ley de Patentes de Invención y Modelos de Utilidad (Ley 24.481)](https://www.wipo.int/wipolex/en/legislation/details/21176) — patentes e invenções.
+- **Chile:** [Ley n.º 17.336 sobre Propiedad Intelectual](https://www.bcn.cl/leychile/navegar?idNorma=28933) — propiedad intelectual.
+- **Chile:** [Ley n.º 19.039 sobre Propiedad Industrial](https://www.bcn.cl/leychile/navegar?idNorma=30608) — patentes, marcas y propiedad industrial.
 
 ### Ásia / Asia
 
-- **China:** _[diploma, artigo]_
-- **Japão:** _[diploma, artigo]_
-- **Índia:** _[diploma, artigo]_
-- **Coreia do Sul:** _[diploma, artigo]_
-- **Outros países:** _[diploma, artigo]_
+- **中国 (China):** [中华人民共和国著作权法 (Copyright Law of the PRC)](https://www.wipo.int/wipolex/en/legislation/details/21065) — 著作权 e direitos conexos.
+- **中国 (China):** [中华人民共和国专利法 (Patent Law of the PRC)](https://www.wipo.int/wipolex/en/legislation/details/21027) — 专利 e invenções.
+- **中国 (China):** [计算机软件保护条例 (Regulations on the Protection of Computer Software)](https://www.wipo.int/wipolex/en/legislation/details/13396) — proteção jurídica de software.
+- **日本 (Japan):** [著作権法 (Copyright Act)](https://elaws.e-gov.go.jp/document?lawid=345AC0000000048) — 著作権 e direitos conexos.
+- **日本 (Japan):** [特許法 (Patent Act)](https://elaws.e-gov.go.jp/document?lawid=334AC0000000121) — 特許 e invenções.
+- **भारत (India):** [Copyright Act, 1957](https://www.wipo.int/wipolex/en/legislation/details/22949) — copyright e direitos conexos.
+- **भारत (India):** [Patents Act, 1970](https://www.wipo.int/wipolex/en/legislation/details/22960) — patentes e invenções.
+- **대한민국 (South Korea):** [저작권법 (Copyright Act)](https://www.wipo.int/wipolex/en/legislation/details/23632) — 저작권 e direitos conexos.
+- **대한민국 (South Korea):** [특허법 (Patent Act)](https://www.wipo.int/wipolex/en/legislation/details/23642) — 특허 e invenções.
 
 ### África / Africa
 
-- **África do Sul:** _[diploma, artigo]_
-- **Angola:** _[diploma, artigo]_
-- **Moçambique:** _[diploma, artigo]_
-- **Cabo Verde:** _[diploma, artigo]_
-- **Nigéria:** _[diploma, artigo]_
-- **Outros países:** _[diploma, artigo]_
+- **South Africa / Suid-Afrika:** [Copyright Act 98 of 1978](https://www.wipo.int/wipolex/en/legislation/details/4067) — copyright e direitos conexos.
+- **South Africa / Suid-Afrika:** [Patents Act 57 of 1978](https://www.wipo.int/wipolex/en/legislation/details/6256) — patentes e invenções.
+- **Angola:** [Lei n.º 15/14, de 31 de julho — Direito de Autor e Direitos Conexos](https://www.wipo.int/wipolex/en/legislation/details/18642) — direito de autor e direitos conexos.
+- **Angola:** [Lei n.º 3/92, de 28 de fevereiro — Propriedade Industrial](https://www.wipo.int/wipolex/en/legislation/details/5667) — propriedade industrial.
+- **Moçambique:** [Lei n.º 9/2022, de 29 de junho — Direito de Autor e Direitos Conexos](https://www.wipo.int/wipolex/en/legislation/details/21426) — direito de autor e direitos conexos.
+- **Moçambique:** [Código da Propriedade Industrial (Decreto n.º 47/2015)](https://www.wipo.int/wipolex/en/legislation/details/16076) — propriedade industrial.
+- **Cabo Verde:** [Decreto-Lei n.º 1/2009, de 27 de abril — Direito de Autor e Direitos Conexos](https://www.wipo.int/wipolex/en/legislation/details/8227) — direito de autor e direitos conexos.
+- **Cabo Verde:** [Código da Propriedade Industrial](https://www.wipo.int/wipolex/en/legislation/details/6422) — propriedade industrial.
+- **Nigeria:** [Copyright Act](https://www.wipo.int/wipolex/en/legislation/details/21820) — copyright e direitos conexos.
+- **Nigeria:** [Patents and Designs Act](https://www.wipo.int/wipolex/en/legislation/details/5414) — patentes e desenhos.
 
 ### Oceania / Oceania
 
-- **Austrália:** _[diploma, artigo]_
-- **Nova Zelândia:** _[diploma, artigo]_
-- **Outros países:** _[diploma, artigo]_
+- **Australia:** [Copyright Act 1968](https://www.legislation.gov.au/C1968A00063/latest/text) — copyright e direitos conexos.
+- **Australia:** [Patents Act 1990](https://www.legislation.gov.au/C2004A04060/latest/text) — patentes e invenções.
+- **New Zealand / Aotearoa:** [Copyright Act 1994](https://www.legislation.govt.nz/act/public/1994/0143/latest/DLM345634.html) — copyright e direitos conexos.
+- **New Zealand / Aotearoa:** [Patents Act 2013](https://www.legislation.govt.nz/act/public/2013/0068/latest/DLM5483400.html) — patentes e invenções.
 
