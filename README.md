@@ -1,3 +1,8 @@
+> [!WARNING]
+> **ESTE PROJETO NÃO É OPEN SOURCE. NÃO ACEITAMOS O USO DO CÓDIGO PARA VERSÕES MODIFICADAS. QUALQUER AÇÃO SERÁ PUNÍVEL PELA LEI AO ABRIGO DA PROTEÇÃO DE PROPRIEDADE. O PROGRAMA É PATENTADO PELA PATAO.CLOUD.**
+>
+> **THIS PROJECT IS NOT OPEN SOURCE. WE DO NOT ACCEPT THE USE OF THE CODE FOR MODIFIED VERSIONS. ANY ACTION WILL BE PUNISHABLE BY LAW UNDER PROPERTY PROTECTION. THE PROGRAM IS PATENTED BY PATAO.CLOUD.**
+
 # Pauth40 - Two Factor Authenticator
 
 A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **XAML** and **MVVM**. The interface is a full reconstruction of the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome. The interface ships in **European Portuguese** and **US English**, and the community can add more languages by editing JSON files.
