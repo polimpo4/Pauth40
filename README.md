@@ -2,6 +2,8 @@
 > **ESTE PROJETO NÃO É OPEN SOURCE. NÃO ACEITAMOS O USO DO CÓDIGO PARA VERSÕES MODIFICADAS. QUALQUER AÇÃO SERÁ PUNÍVEL PELA LEI AO ABRIGO DA PROTEÇÃO DE PROPRIEDADE. O PROGRAMA É PATENTADO PELA PATAO.CLOUD.**
 >
 > **THIS PROJECT IS NOT OPEN SOURCE. WE DO NOT ACCEPT THE USE OF THE CODE FOR MODIFIED VERSIONS. ANY ACTION WILL BE PUNISHABLE BY LAW UNDER PROPERTY PROTECTION. THE PROGRAM IS PATENTED BY PATAO.CLOUD.**
+>
+> [REFERÊNCIAS LEGAIS / LEGAL REFERENCES](#proteção-legal--legal-protection)
 
 # Pauth40 - Two Factor Authenticator
 
@@ -204,3 +206,64 @@ Assets\                         duck mascot and app icon
 docs\screenshots\               interface screenshots used by this README
 preview.png                     Latest --render output of the demo vault
 ```
+
+## Proteção legal / Legal protection
+
+Referências legais que sustentam a proteção deste software, a nível internacional e nacional. Para cada jurisdição, indicar o diploma, os artigos aplicáveis e o âmbito de proteção.
+
+> **A preencher e validar por um jurista.** Esta secção é um índice de trabalho. As entradas abaixo não constituem parecer jurídico e devem ser substituídas pelos textos legais oficiais aplicáveis.
+
+<!-- Formato sugerido: **País:** Lei n.º X/AAAA, artigos Y.º–Z.º — âmbito de proteção. -->
+
+### Internacional / International
+
+- **Convenções e tratados internacionais:** _[diploma, artigo]_
+- **OMPI / WIPO:** _[diploma, artigo]_
+- **Acordo TRIPS / WTO:** _[diploma, artigo]_
+
+### Europa / Europe
+
+- **União Europeia:** _[diploma, artigo]_
+- **Portugal:** _[diploma, artigo]_
+- **Espanha:** _[diploma, artigo]_
+- **França:** _[diploma, artigo]_
+- **Alemanha:** _[diploma, artigo]_
+- **Reino Unido:** _[diploma, artigo]_
+- **Outros países:** _[diploma, artigo]_
+
+### América do Norte / North America
+
+- **Estados Unidos:** _[diploma, artigo]_
+- **Canadá:** _[diploma, artigo]_
+- **México:** _[diploma, artigo]_
+
+### América do Sul / South America
+
+- **Brasil:** _[diploma, artigo]_
+- **Argentina:** _[diploma, artigo]_
+- **Chile:** _[diploma, artigo]_
+- **Outros países:** _[diploma, artigo]_
+
+### Ásia / Asia
+
+- **China:** _[diploma, artigo]_
+- **Japão:** _[diploma, artigo]_
+- **Índia:** _[diploma, artigo]_
+- **Coreia do Sul:** _[diploma, artigo]_
+- **Outros países:** _[diploma, artigo]_
+
+### África / Africa
+
+- **África do Sul:** _[diploma, artigo]_
+- **Angola:** _[diploma, artigo]_
+- **Moçambique:** _[diploma, artigo]_
+- **Cabo Verde:** _[diploma, artigo]_
+- **Nigéria:** _[diploma, artigo]_
+- **Outros países:** _[diploma, artigo]_
+
+### Oceania / Oceania
+
+- **Austrália:** _[diploma, artigo]_
+- **Nova Zelândia:** _[diploma, artigo]_
+- **Outros países:** _[diploma, artigo]_
+
