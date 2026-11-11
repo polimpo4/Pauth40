@@ -29,7 +29,10 @@ public partial class UpdateWindow : Window
 
         CurrentVersionText.Text = "v" + info.CurrentVersion;
         LatestVersionText.Text = "v" + info.LatestVersion;
-        ReleaseNotesText.Text = info.ReleaseNotes ?? Loc.T("update_no_notes");
+
+        string notes = ReleaseNotes.Select(info.ReleaseNotes, Loc.CurrentLanguageCode);
+        ReleaseNotesText.Text = notes.Length > 0 ? notes : Loc.T("update_no_notes");
+
         VersionText.Text = AppVersion.Display;
 
         if (!info.HasAsset)

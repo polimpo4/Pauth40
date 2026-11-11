@@ -113,6 +113,7 @@
                                   HorizontalScrollBarVisibility="Disabled"
                                   Focusable="False">
                         <TextBlock x:Name="ReleaseNotesText"
+                                   AutomationProperties.AutomationId="ReleaseNotesText"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    FontFamily="Segoe UI Variable Text, Segoe UI"
                                    FontSize="12.5"
