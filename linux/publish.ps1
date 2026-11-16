@@ -101,7 +101,25 @@ if (-not $SkipLinux) {
 
     $archive = Join-Path $dist "Pauth40-$version-linux-x64.tar.gz"
     if (Test-Path $archive) { Remove-Item $archive -Force }
-    tar -C $linuxOut -czf $archive .
+
+    # tar on Windows does not store Unix permissions, which would leave the
+    # Pauth40 binary non-executable after extraction. Prefer WSL, which can set
+    # the mode bits, and fall back to a plain tar with a warning.
+    $wsl = Get-Command wsl -ErrorAction SilentlyContinue
+    if ($wsl) {
+        $script = (Join-Path $root 'make-tarball.sh') -replace '\\', '/'
+        $sourcePath = $linuxOut -replace '\\', '/'
+        $targetPath = $archive -replace '\\', '/'
+        $wslSource = "/mnt/" + $sourcePath.Substring(0, 1).ToLower() + $sourcePath.Substring(2)
+        $wslTarget = "/mnt/" + $targetPath.Substring(0, 1).ToLower() + $targetPath.Substring(2)
+        $wslScript = "/mnt/" + $script.Substring(0, 1).ToLower() + $script.Substring(2)
+        & wsl bash $wslScript $wslSource $wslTarget
+        if ($LASTEXITCODE -ne 0) { throw 'make-tarball.sh failed' }
+    }
+    else {
+        Write-Warning 'WSL not found; the tarball will not preserve executable permissions. Build it on Linux with publish.sh instead.'
+        tar -C $linuxOut -czf $archive .
+    }
     Write-Host "Linux: $archive"
 }
 
