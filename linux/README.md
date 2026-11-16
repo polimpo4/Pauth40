@@ -58,6 +58,12 @@ dotnet workload install android ios tvos wasm-tools
 - **Android**: Android SDK with platform 36 and build-tools 36. Set
   `AndroidSdkDirectory` when it is not in the default location.
 - **iOS / tvOS**: a Mac with Xcode for the final application bundle and signing.
+  The Xcode version must match the installed .NET for iOS/tvOS workload; if the
+  build reports `requires Xcode <version>`, update Xcode or pin the SDK (the
+  repository `global.json` pins .NET 10.0.300, whose Apple workload supports
+  Xcode 26.5 and newer). The GitHub `Build` workflow does not build the Apple
+  targets because hosted macOS runners change Xcode independently of the
+  workload; run those builds on a Mac with the matching toolchain.
 - **Linux desktop**: a graphical session with X11 (or XWayland). The publish is
   self-contained and does not require the .NET runtime on the target machine.
 
@@ -213,5 +219,8 @@ same `<Version>`, `<ApplicationDisplayVersion>` and `<ApplicationVersion>`.
   `--appimage-extract-and-run`.
 - **macOS blocks the app** - use **Open** from the context menu the first time;
   the release builds are not notarized.
+- **`This version of .NET for iOS requires Xcode <version>`** - install the
+  matching Xcode, or pin the .NET SDK with `global.json` so the Apple workload
+  matches the Xcode in use.
 - **No window on Linux over SSH** - a graphical session is required; the app
   uses X11/XWayland through Skia.

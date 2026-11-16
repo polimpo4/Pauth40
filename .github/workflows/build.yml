@@ -51,23 +51,6 @@ jobs:
       - name: Build WebAssembly
         run: dotnet build ${{ env.PROJECT }} -f net10.0-browserwasm -c Release -p:TargetFrameworks=net10.0-browserwasm
 
-  macos:
-    name: macOS / iOS / tvOS
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.300'
-      - name: Install Apple workloads
-        run: dotnet workload install ios tvos
-      - name: Build macOS desktop
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-desktop -c Release -p:TargetFrameworks=net10.0-desktop
-      - name: Build iOS simulator
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-ios -c Release -p:TargetFrameworks=net10.0-ios -p:RuntimeIdentifier=iossimulator-x64
-      - name: Build tvOS simulator
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-tvos -c Release -p:TargetFrameworks=net10.0-tvos -p:RuntimeIdentifier=tvossimulator-x64
-
   android:
     name: Android
     runs-on: ubuntu-latest
