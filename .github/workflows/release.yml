@@ -28,7 +28,7 @@ jobs:
         shell: pwsh
         run: |
           $version = ([xml](Get-Content $env:PROJECT)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
-          dotnet publish $env:PROJECT -f net10.0-windows10.0.26100 -c Release -r win-x64 `
+          dotnet publish $env:PROJECT -f net10.0-windows10.0.26100 -c Release -p:TargetFrameworks=net10.0-windows10.0.26100 -r win-x64 `
             --self-contained true -p:PublishSingleFile=true -p:WindowsPackageType=None `
             -p:UseMonoRuntime=false -p:EnableCompressionInSingleFile=true -p:DebugType=none -o publish
           Copy-Item publish/Pauth40.exe "Pauth40-$version-win-x64.exe"
@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$PROJECT" | head -n1)"
-          dotnet publish "$PROJECT" -f net10.0-desktop -c Release -r linux-x64 \
+          dotnet publish "$PROJECT" -f net10.0-desktop -c Release -p:TargetFrameworks=net10.0-desktop -r linux-x64 \
             --self-contained true -p:PublishSingleFile=true -p:UseMonoRuntime=false \
             -p:DebugType=none -o publish
           cp linux/Pauth40.desktop linux/install-linux.sh linux/uninstall-linux.sh publish/
@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$PROJECT" | head -n1)"
-          dotnet publish "$PROJECT" -f net10.0-browserwasm -c Release -o wasm
+          dotnet publish "$PROJECT" -f net10.0-browserwasm -c Release -p:TargetFrameworks=net10.0-browserwasm -o wasm
           (cd wasm/wwwroot && zip -qr "../../Pauth40-$VERSION-wasm.zip" .)
       - name: Build AppImage
         run: |
@@ -97,7 +97,7 @@ jobs:
 
   macos:
     name: macOS artifact
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -109,7 +109,7 @@ jobs:
           set -euo pipefail
           VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$PROJECT" | head -n1)"
           for RID in osx-arm64 osx-x64; do
-            dotnet publish "$PROJECT" -f net10.0-desktop -c Release -r "$RID" \
+            dotnet publish "$PROJECT" -f net10.0-desktop -c Release -p:TargetFrameworks=net10.0-desktop -r "$RID" \
               --self-contained true -p:PublishSingleFile=true -p:UseMonoRuntime=false \
               -p:DebugType=none -o "publish-$RID"
 

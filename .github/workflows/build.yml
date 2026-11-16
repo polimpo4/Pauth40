@@ -34,7 +34,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Build
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-windows10.0.26100 -c Release
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-windows10.0.26100 -c Release -p:TargetFrameworks=net10.0-windows10.0.26100
 
   linux:
     name: Linux (Skia) and WebAssembly
@@ -47,13 +47,13 @@ jobs:
       - name: Install WebAssembly workload
         run: dotnet workload install wasm-tools
       - name: Build Linux desktop
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-desktop -c Release
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-desktop -c Release -p:TargetFrameworks=net10.0-desktop
       - name: Build WebAssembly
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-browserwasm -c Release
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-browserwasm -c Release -p:TargetFrameworks=net10.0-browserwasm
 
   macos:
     name: macOS / iOS / tvOS
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -62,11 +62,11 @@ jobs:
       - name: Install Apple workloads
         run: dotnet workload install ios tvos
       - name: Build macOS desktop
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-desktop -c Release
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-desktop -c Release -p:TargetFrameworks=net10.0-desktop
       - name: Build iOS simulator
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-ios -c Release -p:RuntimeIdentifier=iossimulator-x64
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-ios -c Release -p:TargetFrameworks=net10.0-ios -p:RuntimeIdentifier=iossimulator-x64
       - name: Build tvOS simulator
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-tvos -c Release -p:RuntimeIdentifier=tvossimulator-x64
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-tvos -c Release -p:TargetFrameworks=net10.0-tvos -p:RuntimeIdentifier=tvossimulator-x64
 
   android:
     name: Android
@@ -79,4 +79,4 @@ jobs:
       - name: Install Android workload
         run: dotnet workload install android
       - name: Build
-        run: dotnet build ${{ env.PROJECT }} -f net10.0-android -c Release -p:AndroidPackageFormat=apk
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-android -c Release -p:TargetFrameworks=net10.0-android -p:AndroidPackageFormat=apk

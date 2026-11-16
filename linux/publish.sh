@@ -30,6 +30,7 @@ mkdir -p "$DIST"
 echo "Publishing Pauth40 $VERSION for $RID"
 dotnet publish "$PROJECT" \
     -f net10.0-desktop \
+    -p:TargetFrameworks=net10.0-desktop \
     -c Release \
     -r "$RID" \
     --self-contained true \
@@ -84,7 +85,7 @@ if [[ "$RID" == linux-x64 ]]; then
     WASM_OUT="$DIST/wasm"
     rm -rf "$WASM_OUT"
     echo "Publishing WebAssembly"
-    dotnet publish "$PROJECT" -f net10.0-browserwasm -c Release -o "$WASM_OUT"
+    dotnet publish "$PROJECT" -f net10.0-browserwasm -p:TargetFrameworks=net10.0-browserwasm -c Release -o "$WASM_OUT"
     if [[ -d "$WASM_OUT/wwwroot" ]]; then
         (cd "$WASM_OUT/wwwroot" && zip -qr "$DIST/Pauth40-$VERSION-wasm.zip" .)
         echo "WebAssembly: $DIST/Pauth40-$VERSION-wasm.zip"

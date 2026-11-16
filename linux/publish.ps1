@@ -52,6 +52,7 @@ function Publish-Target {
     $arguments = @(
         'publish', $project,
         '-f', $Framework,
+        "-p:TargetFrameworks=$Framework",
         '-c', 'Release',
         '-o', $Output
     ) + $Extra
