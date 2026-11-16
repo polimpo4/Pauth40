@@ -1,0 +1,255 @@
+<UserControl x:Class="Pauth40.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Pauth40.Controls"
+             xmlns:loc="using:Pauth40.Localization">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="20,14,20,26">
+        <Grid MaxWidth="880" HorizontalAlignment="Center">
+            <StackPanel>
+
+                <!-- ==================================================== MASCOT -->
+                <Grid Width="222" Height="222" HorizontalAlignment="Center">
+                    <Ellipse Width="220" Height="220" Opacity="0.35">
+                        <Ellipse.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#7000D9FF" Offset="0" />
+                                <GradientStop Color="#1200D9FF" Offset="0.7" />
+                                <GradientStop Color="#0000D9FF" Offset="1" />
+                            </LinearGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <Border Width="198" Height="198"
+                            CornerRadius="26"
+                            BorderThickness="1.5"
+                            BorderBrush="#C600D9FF"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                        <Border.Background>
+                            <ImageBrush ImageSource="ms-appx:///Assets/duck.png"
+                                        Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+
+                    <Border Width="198" Height="198"
+                            CornerRadius="26"
+                            BorderThickness="1"
+                            BorderBrush="#4D8FE9FF"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsHitTestVisible="False" />
+                </Grid>
+
+                <!-- ==================================================== CURRENT CODE -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    <Path Style="{StaticResource IconShield}"
+                          Stroke="{StaticResource CyanBrush}"
+                          Width="24" Height="24" />
+                    <TextBlock loc:Loc.Key="main_current_code"
+                               Style="{StaticResource SectionHeading}"
+                               FontSize="24"
+                               Margin="10,0,0,0" />
+                </StackPanel>
+
+                <Border MaxWidth="620"
+                        Height="140"
+                        Margin="0,12,0,0"
+                        CornerRadius="22"
+                        BorderThickness="1"
+                        BorderBrush="#A600D9FF"
+                        Background="{StaticResource CodePanelBrush}"
+                        HorizontalAlignment="Stretch">
+                    <Grid>
+                        <Border CornerRadius="21" Margin="1" IsHitTestVisible="False">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2600D9FF" Offset="0" />
+                                    <GradientStop Color="#0000D9FF" Offset="0.45" />
+                                    <GradientStop Color="#14007BFF" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <controls:CircularCountdown Width="320" Height="320"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Fraction="{Binding Fraction}"
+                                                    IsActive="{Binding HasSelectedAccount}"
+                                                    TrackBrush="#102B42"
+                                                    IsHitTestVisible="False" />
+
+                        <Viewbox Stretch="Uniform"
+                                 MaxWidth="420"
+                                 MaxHeight="104"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CurrentCode}"
+                                       FontFamily="Consolas"
+                                       FontSize="66"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="12,0"
+                                       TextAlignment="Center" />
+                        </Viewbox>
+
+                        <Border Height="1" VerticalAlignment="Top" Margin="26,0,26,0" Background="#4600D9FF" />
+                    </Grid>
+                </Border>
+
+                <!-- ==================================================== COUNTDOWN -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                    <Path Style="{StaticResource IconRefresh}"
+                          Stroke="{StaticResource CyanBrush}"
+                          Width="19" Height="19" />
+                    <TextBlock loc:Loc.Key="main_next_code_in"
+                               Style="{StaticResource SubHeading}"
+                               FontSize="21"
+                               Margin="9,0,0,0" />
+                </StackPanel>
+
+                <Border MaxWidth="340"
+                        Height="62"
+                        Margin="0,10,0,0"
+                        CornerRadius="17"
+                        BorderThickness="1"
+                        BorderBrush="#7A007BFF"
+                        Background="{StaticResource PanelSoftBrush}"
+                        HorizontalAlignment="Stretch">
+                    <Grid>
+                        <TextBlock Text="{Binding RemainingSeconds}"
+                                   Style="{StaticResource MonoValue}"
+                                   FontSize="38"
+                                   Margin="0,-4,0,0" />
+                        <ProgressBar Style="{StaticResource CountdownProgress}"
+                                     Value="{Binding ProgressPercent, Mode=OneWay}"
+                                     Height="4"
+                                     VerticalAlignment="Bottom"
+                                     Margin="18,0,18,7"
+                                     IsHitTestVisible="False" />
+                    </Grid>
+                </Border>
+
+                <!-- ==================================================== ACCOUNT -->
+                <Grid Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox x:Name="AccountCombo"
+                              Height="62"
+                              Style="{StaticResource AccountComboBox}"
+                              ItemsSource="{Binding Accounts}"
+                              SelectedItem="{Binding SelectedAccount, Mode=TwoWay}"
+                              HorizontalContentAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="52" MinWidth="240">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Width="38" Height="38"
+                                            CornerRadius="10"
+                                            Background="#1A00D9FF"
+                                            BorderBrush="#6600D9FF"
+                                            BorderThickness="1"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Initial}"
+                                                   Foreground="{StaticResource CyanBrush}"
+                                                   FontSize="17"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   FontSize="14.5"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Subtitle}"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   FontSize="12"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Button Grid.Column="1"
+                            Style="{StaticResource IconButton}"
+                            Width="52"
+                            Height="52"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Command="{Binding RemoveAccountCommand}"
+                            IsEnabled="{Binding HasSelectedAccount}"
+                            loc:Loc.ToolTipKey="main_remove_tooltip">
+                        <Path Style="{StaticResource IconTrash}"
+                              Stroke="{StaticResource DangerBrush}"
+                              Width="19" Height="19" />
+                    </Button>
+                </Grid>
+
+                <TextBlock loc:Loc.Key="main_selector_empty_hint"
+                           Style="{StaticResource MutedText}"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"
+                           Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}" />
+
+                <!-- ==================================================== ACTIONS -->
+                <Button Height="58"
+                        Margin="0,18,0,0"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding CaptureCommand}"
+                        loc:Loc.ToolTipKey="main_capture_tooltip">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Path Style="{StaticResource IconCamera}"
+                              Stroke="#F7FDFF"
+                              Width="22" Height="22" />
+                        <TextBlock loc:Loc.Key="main_capture"
+                                   Style="{StaticResource ButtonLabel}"
+                                   FontSize="18"
+                                   Margin="12,0,0,0" />
+                    </StackPanel>
+                </Button>
+
+                <Button Height="56"
+                        Margin="0,12,0,0"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding HasAccounts}"
+                        loc:Loc.ToolTipKey="main_copy_tooltip">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Grid Width="22" Height="22">
+                            <Path Style="{StaticResource IconCopy}"
+                                  Stroke="{StaticResource CyanBrush}"
+                                  Width="19" Height="19"
+                                  Visibility="{Binding IsCopyFeedback, Converter={StaticResource InverseBoolToVisibility}}" />
+                            <Path Style="{StaticResource IconCheck}"
+                                  Stroke="{StaticResource CyanBrush}"
+                                  StrokeThickness="2"
+                                  Width="20" Height="20"
+                                  Visibility="{Binding IsCopyFeedback, Converter={StaticResource BoolToVisibility}}" />
+                        </Grid>
+                        <TextBlock Text="{Binding CopyButtonText}"
+                                   Style="{StaticResource ButtonLabel}"
+                                   FontSize="17"
+                                   Margin="12,0,0,0" />
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

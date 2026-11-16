@@ -7,13 +7,29 @@
 
 # Pauth40 - Two Factor Authenticator
 
-A native Windows 11 two-factor authenticator built with **WPF**, **.NET 8**, **XAML** and **MVVM**. The interface is a full reconstruction of the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome. The interface ships in **European Portuguese** and **US English**, and the community can add more languages by editing JSON files.
+A local two-factor authenticator originally built with **WPF**, **.NET 8** and **MVVM**, and now ported to **Uno Platform** on **.NET 10**. The interface keeps the Pauth40 reference design: dark navy glass surfaces, cyan/blue lighting, circuit-line background, the Patão duck mascot, and a custom window chrome. The interface ships in **European Portuguese** and **US English**, and the community can add more languages by editing JSON files.
 
 <img src="docs/screenshots/03-main.png" alt="Pauth40 main window" width="820">
 
+> **Uno Platform port (v2.2.0)** - the cross-platform sources live in [`linux/`](linux). The same project builds for **Windows, Linux, macOS, Android, iOS, tvOS and WebAssembly** while keeping the original WPF application in the repository root for reference. See [Platforms](#platforms) and [`linux/README.md`](linux/README.md).
+
+## Platforms
+
+| Platform | Target | Artifact |
+| --- | --- | --- |
+| Windows 10/11 | `net10.0-windows10.0.26100` (WinAppSDK) | `Pauth40-2.2.0-win-x64.exe` |
+| Linux x64 | `net10.0-desktop` (Skia/X11) | `.AppImage` and portable `.tar.gz` |
+| macOS (Intel/Apple Silicon) | `net10.0-desktop` (Skia) | `.app` bundle in a `.zip` |
+| Android | `net10.0-android` | APK (built and signed per platform) |
+| iOS | `net10.0-ios` | `.ipa` (requires an Apple developer certificate) |
+| tvOS | `net10.0-tvos` | `.app` bundle (requires signing) |
+| WebAssembly | `net10.0-browserwasm` | static web bundle in a `.zip` |
+
+Download the ready-to-run builds from the [latest release](https://github.com/polimpo4/Pauth40/releases/latest). Mobile and Apple packages are produced from source with the platform SDKs; the compiled code is shared by every target.
+
 ## What it does
 
-Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into live **TOTP** codes on your Windows desktop. Accounts are kept in a local vault protected by a master password and encrypted with **AES-256-GCM**; nothing is sent to a cloud service, and there is no telemetry. You can add accounts by capturing a QR code from the screen, by dragging QR image files onto the window, or by importing a legacy `novos` folder. The current code is always one click (or `Ctrl+C`) away.
+Pauth40 turns the `otpauth://` QR codes used by two-factor authentication into live **TOTP** codes on your desktop, phone or browser. Accounts are kept in a local vault protected by a master password and encrypted with **AES-256-GCM**; nothing is sent to a cloud service, and there is no telemetry. You can add accounts by capturing a QR code from the screen, by dragging QR image files onto the window, or by importing a legacy `novos` folder. The current code is always one click (or `Ctrl+C`) away.
 
 - **Local and private** - the vault never leaves your computer; the only network requests are an optional recovery/test e-mail that you configure yourself and the read-only version check against the public GitHub releases feed.
 - **Password + e-mail protected** - the app asks for the master password at startup and can recover access through a 6-digit e-mail code.
@@ -37,28 +53,28 @@ Settings hold the password change, SMTP/e-mail recovery configuration, the langu
 ## Features
 
 - Standard **TOTP** codes (SHA-1 / SHA-256 / SHA-512, 6-8 digits, custom periods).
-- **Password-protected vault**: a master password and an associated e-mail are required at startup. Accounts are encrypted at rest with **AES-256-GCM** in `%LOCALAPPDATA%\Pauth40\accounts.dat`.
-- **E-mail password recovery**: a 6-digit code valid for 10 minutes can be sent to the associated e-mail through your own SMTP server; a local Windows recovery copy also allows a reset on the same Windows account.
+- **Password-protected vault**: a master password and an associated e-mail are required at startup. Accounts are encrypted at rest with **AES-256-GCM** in the per-user application data folder (`%LOCALAPPDATA%\Pauth40\accounts.dat` on Windows, `~/.local/share/Pauth40/accounts.dat` on Linux and macOS).
+- **E-mail password recovery**: a 6-digit code valid for 10 minutes can be sent to the associated e-mail through your own SMTP server; on Windows a local DPAPI recovery copy also allows a reset on the same Windows account, and on the other platforms a device-bound key allows the same local reset.
 - **Encrypted database export/import**: create a password-protected `.pauth40` backup and merge it back on any machine without duplicating accounts.
-- **Capture Screen** takes a screenshot, opens a dimmed selection overlay, scans the selected area with ZXing and imports the `otpauth://` account.
+- **Capture Screen** takes a screenshot, opens a dimmed selection overlay, scans the selected area with ZXing and imports the `otpauth://` account. On Windows it uses GDI, on Linux and macOS the native capture tools, and on mobile and WebAssembly the image picker.
 - **Copy Code to ClipBoard** with clipboard retry handling and an inline confirmation state.
 - Custom dark **account selector**; selection updates the code immediately.
 - Account removal from the selector: the trash icon is always visible; click it twice within 6 seconds (or press `Delete` twice) to confirm.
-- Drag and drop QR image files (`.png`, `.jpg`, `.bmp`, `.gif`, `.tif`) onto the window.
+- Drag and drop QR image files (`.png`, `.jpg`, `.bmp`, `.gif`, `.tif`) onto the window on Windows, Linux and macOS.
 - Automatic, best-effort import of the original app's `novos\*.png` QR folder.
-- **Settings window** (gear in the title bar): change the master password, configure/test SMTP, export and import the database.
-- **Dynamic version footer and forced updates** - every window shows the build version read from the assembly; when a newer public GitHub release exists, a mandatory window downloads it, replaces the executable and relaunches the app.
-- Resizable custom window: drag the title bar, double-click to maximize/restore, DPI-aware layout, Windows 11 rounded corners and dark DWM frame.
+- **Settings page** (gear in the title bar): change the master password, configure/test SMTP, export and import the database.
+- **Dynamic version footer and forced updates** - every screen shows the build version read from the assembly; on Windows and Linux, when a newer public GitHub release exists, a mandatory screen downloads it, replaces the executable/AppImage and relaunches the app.
+- Resizable custom window: drag the title bar, double-click to maximize/restore, DPI-aware layout, Windows 11 rounded corners and dark DWM frame. On Linux and macOS the native window frame is used.
 
 ## Languages
 
 The interface is translated at runtime from plain JSON files in [`langs`](langs). European Portuguese (`pt-PT`) is the reference language and US English (`en-US`) is the built-in fallback. A language file on disk overrides the embedded copy with the same `code`, so translations can be edited or added without rebuilding the app.
 
-- On first run the app follows the Windows UI language: Portuguese Windows opens in `pt-PT`, other systems open in `en-US` when available.
-- The language selector is in the title bar of the security screen (first-run setup, unlock and recovery) and in **Settings → Language**.
-- Changing the language updates every open window immediately and is saved to `%LOCALAPPDATA%\Pauth40\language.json` (or `%PAUTH40_DATA_DIR%\language.json`).
+- On first run the app follows the operating system UI language: Portuguese Windows opens in `pt-PT`, other systems open in `en-US` when available.
+- The language selector is in the header of the security screen (first-run setup, unlock and recovery) and in **Settings → Language**.
+- Changing the language updates the interface immediately and is saved to `%LOCALAPPDATA%\Pauth40\language.json` (or `%PAUTH40_DATA_DIR%\language.json`, `~/.local/share/Pauth40/language.json` on Linux and macOS).
 - Missing keys fall back to `pt-PT`, then `en-US`, so incomplete translations never show blank labels.
-- Files are loaded from the embedded resources, from `langs` next to `Pauth40.exe`, and from `%LOCALAPPDATA%\Pauth40\langs`.
+- Files are loaded from the embedded resources, from `langs` next to the executable, and from the per-user `langs` folder.
 
 To add a language, copy `langs/en-US.json` to `langs/<code>.json` (for example `fr-FR.json`), translate the values and keep the keys and `{0}` placeholders unchanged. See [`langs/README.md`](langs/README.md) for the full translator guide and contribution workflow.
 
@@ -66,31 +82,76 @@ To add a language, copy `langs/en-US.json` to `langs/<code>.json` (for example `
 
 - TOTP secrets are never written to logs, telemetry or the network.
 - The vault is encrypted with a random 256-bit vault key using **AES-256-GCM**. The vault key is wrapped by a key derived from the master password with **PBKDF2-SHA256 (310,000 iterations)** and a random salt.
-- A second copy of the vault key is protected with **Windows DPAPI** (`CurrentUser`), which enables password reset on the same Windows user. That copy is what makes the local reset work; it does not exist on another computer or Windows account.
-- Settings in `security.json` contain the password verifier, salt, wrapped vault key, DPAPI recovery blob and SMTP configuration. Passwords and SMTP app passwords are stored only in encrypted form, never in clear text.
+- A second copy of the vault key is protected with **Windows DPAPI** (`CurrentUser`) on Windows, which enables password reset on the same Windows user. On the other platforms the copy is protected by a random AES-GCM key stored with owner-only permissions in the application data folder. That copy is what makes the local reset work; it does not exist on another computer or user account.
+- Settings in `security.json` contain the password verifier, salt, wrapped vault key, local recovery blob and SMTP configuration. Passwords and SMTP app passwords are stored only in encrypted form, never in clear text.
 - `accounts.dat` and `.pauth40` backups are authenticated with AES-GCM, so a wrong password or a modified file is rejected instead of silently returning corrupted data.
 - No cloud services, no telemetry. The app works offline; the only request made without user action is the read-only version check against the public GitHub releases API, which sends no vault data and fails silently.
 - The reference code (`994195`) and countdown are **not** hardcoded; every value comes from `Otp.NET` and the system clock.
 
 ## Build
 
-Requirements: Windows 10/11, .NET SDK 8.0 or newer (the project targets `net8.0-windows`).
+### Uno Platform build (Windows, Linux, macOS, mobile and WebAssembly)
+
+Requirements: [.NET SDK 10](https://dotnet.microsoft.com/download) and the workloads for the targets you need.
+
+```powershell
+dotnet workload install android ios tvos wasm-tools
+```
+
+The cross-platform project is [`linux/Pauth40/Pauth40.csproj`](linux/Pauth40/Pauth40.csproj) and targets `net10.0-android`, `net10.0-ios`, `net10.0-tvos`, `net10.0-windows10.0.26100`, `net10.0-browserwasm` and `net10.0-desktop`.
+
+```powershell
+# Windows
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-windows10.0.26100 -c Release
+
+# Linux / macOS desktop (Skia)
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-desktop -c Release
+
+# WebAssembly
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-browserwasm -c Release
+
+# Android
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-android -c Release
+
+# iOS / tvOS (requires a Mac for the final app bundle and signing)
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-ios -c Release
+dotnet build .\linux\Pauth40\Pauth40.csproj -f net10.0-tvos -c Release
+```
+
+The Mac and Linux desktop runtimes are self-contained; the Android build needs the Android SDK (set `AndroidSdkDirectory` if it is not in the default location). See [`linux/README.md`](linux/README.md) for the platform notes, data locations and packaging details.
+
+### Publish release artifacts
+
+```powershell
+# Windows host: Windows exe, Linux tarball and WebAssembly bundle in ..\dist
+.\linux\publish.ps1
+```
+
+```bash
+# Linux/macOS host: native tarball plus WebAssembly; set APPIMAGETOOL for an AppImage
+cd linux
+./publish.sh
+```
+
+On Linux the AppImage is the recommended package because the built-in updater replaces `.AppImage` files. The portable tarball ships with `install-linux.sh` and `uninstall-linux.sh`.
+
+### WPF build (original Windows application)
+
+Requirements: Windows 10/11, .NET SDK 8.0 or newer (the legacy project targets `net8.0-windows`).
 
 ```powershell
 dotnet build .\Pauth40.csproj -c Release
 ```
 
-## Publish a single executable
-
 ```powershell
 .\build.ps1 -Publish
 ```
 
-The self-contained, single-file executable is written to `dist\Pauth40.exe`.
+The self-contained, single-file WPF executable is written to `dist\Pauth40.exe`.
 
 ## Version and updates
 
-The version shown in the footer of every window is read from the assembly metadata (`<Version>` in `Pauth40.csproj`), so it is never hardcoded. The current build is `2.1.1` and the footer displays `v2.1.1`.
+The version shown in the footer is read from the assembly metadata (`<Version>` in the project file), so it is never hardcoded. The current build is `2.2.0` and the footer displays `v2.2.0`. Both projects use the same version number.
 
 On startup, after the security window is visible, Pauth40 queries the latest **public** GitHub release in the background:
 
@@ -100,13 +161,15 @@ https://api.github.com/repos/polimpo4/Pauth40/releases/latest
 
 If the release tag (for example `v2.1.2`) is a higher semantic version than the installed one, a mandatory update window opens on top of the app. The user can update now or exit; the old build cannot continue to be used.
 
-**Update now** downloads the first `.exe` asset from the release (preferring a file whose name contains `Pauth40`) and validates HTTPS/loopback, the advertised size, the `sha256:` digest when GitHub exposes one and the Windows `MZ` header. A hidden PowerShell helper then waits for Pauth40 to close, replaces `Pauth40.exe`, relaunches the new build and deletes the temporary download. The app must be installed in a folder where the current user can write, and the executable must keep the name `Pauth40.exe`.
+**Update now** downloads the first suitable asset from the release (`.exe` on Windows, `.AppImage` on Linux, preferring a file whose name contains `Pauth40`) and validates HTTPS/loopback, the advertised size, the `sha256:` digest when GitHub exposes one and the Windows `MZ` header. A hidden PowerShell helper then waits for Pauth40 to close, replaces the executable, relaunches the new build and deletes the temporary download. The app must be installed in a folder where the current user can write, and the executable must keep the name `Pauth40.exe` (or the AppImage must stay executable).
+
+macOS, Android, iOS, tvOS and WebAssembly have no in-app updater; install the new release manually or through the platform store. The mandatory update screen is only used on Windows and Linux.
 
 To publish an update:
 
-1. Increase `<Version>` in `Pauth40.csproj` (for example to `2.1.2`).
-2. Run `.\build.ps1 -Publish`.
-3. Create a GitHub release with the matching tag (`v2.1.2`), attach `dist\Pauth40.exe` as an asset and publish it. The release body is shown as release notes in the update window.
+1. Increase `<Version>` in both `Pauth40.csproj` (WPF) and `linux\Pauth40\Pauth40.csproj` (Uno) (for example to `2.2.1`).
+2. Run `.\linux\publish.ps1` (Windows, Linux and WebAssembly) and, on Linux, `./linux/publish.sh` to produce the AppImage.
+3. Create a GitHub release with the matching tag (`v2.2.1`), attach the `.exe`, `.AppImage`, tarball, macOS zips and WASM zip, and publish it. The release body is shown as release notes in the update screen. The `Release` workflow does the same when it is started manually from **Actions > Release > Run workflow** with the tag name.
 4. Do not mark the release as a draft or pre-release; the updater ignores both.
 
 Release notes can be written in both languages. Put each translation after a standalone `[pt-PT]` or `[en-US]` marker line; the update window shows only the section that matches the interface language, falling back to `pt-PT`, then `en-US`, then the first section. A release body without markers is shown as-is.
@@ -125,7 +188,7 @@ The repository and its releases must be publicly readable for anonymous update c
 
 ### First launch
 
-1. Start `Pauth40.exe`. Use the language selector in the title bar to change the interface language.
+1. Start Pauth40 (`Pauth40.exe` on Windows, the AppImage or the installed `pauth40` launcher on Linux, `Pauth40.app` on macOS). Use the language selector in the header to change the interface language.
 2. On the **Protect your vault** screen (`Proteja o seu cofre` in Portuguese), enter the e-mail that will receive password-recovery codes, then define and confirm a master password (minimum 8 characters).
 3. Optionally enable **Set up email delivery now** and fill in your SMTP server, port, user and app password. Provider defaults are filled automatically for Gmail, Outlook, Yahoo, iCloud, Zoho and GMX. You can also do this later in **Settings**.
 4. Click **Create protected vault**. An existing legacy DPAPI vault is migrated automatically and a `accounts.dat.legacy.bak` copy is kept.
@@ -140,7 +203,7 @@ The repository and its releases must be publicly readable for anonymous update c
 
 ### Settings
 
-Open the gear icon in the title bar to:
+Open the gear icon in the header to:
 
 - change the master password (current password + new password confirmation);
 - configure the SMTP server and send a test e-mail;
@@ -152,7 +215,7 @@ Open the gear icon in the title bar to:
 On the unlock screen click **I forgot my password** (`Esqueci a minha senha`):
 
 - **E-mail code** - send a 6-digit code to the associated address (valid for 10 minutes, at most 5 attempts), enter it and define a new password. If no SMTP server is saved yet, the reset screen lets you configure one inline.
-- **Reset using this Windows account** - use the DPAPI recovery copy to define a new password without e-mail. This works only on the same Windows user that created the vault; on another computer or user account, use the e-mail code instead.
+- **Reset using this device** - use the local recovery copy to define a new password without e-mail. On Windows this is the DPAPI copy of the vault key; on Linux, macOS, Android, iOS, tvOS and WebAssembly it is a device-bound AES-GCM key. It works only on the same device and user that created the vault; on another device, use the e-mail code instead.
 
 ### Importing QR image files
 
@@ -162,8 +225,8 @@ Drag one or more QR screenshots onto the window. Legacy `novos` folders are scan
 
 The original app stored its QR screenshots in a `novos` folder beside its executable. Copy those `.png` files into any of these locations:
 
-- `%LOCALAPPDATA%\Pauth40\novos`
-- a `novos` folder next to the new `Pauth40.exe`
+- `%LOCALAPPDATA%\Pauth40\novos` (Windows) or `~/.local/share/Pauth40/novos` (Linux/macOS)
+- a `novos` folder next to the executable
 - a `novos` folder in the current working directory
 
 On startup the app decodes every valid `otpauth://` QR, imports the account and ignores duplicates. If the vault is still the old DPAPI format, the first password setup migrates it to the encrypted keyed format. The source images are never modified. Dragging the same `.png` files onto the window performs the same import immediately.
@@ -181,30 +244,47 @@ Set the `PAUTH40_DATA_DIR` environment variable to point the app at an isolated 
 ## Project layout
 
 ```
-Pauth40.csproj
-App.xaml / App.xaml.cs          DI bootstrap, security gate and --render mode
-MainWindow.xaml / .cs           window chrome, layout, background, interaction
-ViewModels\MainViewModel.cs     accounts, TOTP timer, capture/copy/import commands
-Views\SecurityWindow.*          first-run setup, unlock and password recovery
-Views\SettingsWindow.*          password, SMTP and encrypted database settings
-Views\CaptureOverlayWindow.*    full-screen QR selection overlay
-Views\UpdateWindow.*            mandatory update prompt, progress and retry
-Controls\CircularCountdown.cs   twin TOTP arcs
-Services\                       clipboard, capture, e-mail, commands
-Services\UpdateService.cs       GitHub release check, verified download and self-update
-AppVersion.cs                   dynamic version read from assembly metadata
-SemanticVersion.cs              SemVer parsing and comparison
-Themes\PauthTheme.xaml          palette, brushes, control templates
-Localization\                   loader, XAML markup extension and Loc helpers
-langs\                          pt-PT / en-US JSON translations + translator guide
-Account.cs                      account model
-AccountStore.cs                 AES-GCM keyed vault + legacy DPAPI migration
-SecurityService.cs              password verifier, key wrapping, DPAPI reset, SMTP, backups
-AppPaths.cs                     data-folder resolution (supports PAUTH40_DATA_DIR)
+Pauth40.csproj                   original WPF application (net8.0-windows)
+App.xaml / App.xaml.cs           DI bootstrap, security gate and --render mode
+MainWindow.xaml / .cs            window chrome, layout, background, interaction
+ViewModels\MainViewModel.cs      accounts, TOTP timer, capture/copy/import commands
+Views\SecurityWindow.*           first-run setup, unlock and password recovery
+Views\SettingsWindow.*           password, SMTP and encrypted database settings
+Views\CaptureOverlayWindow.*     full-screen QR selection overlay
+Views\UpdateWindow.*             mandatory update prompt, progress and retry
+Controls\CircularCountdown.cs    twin TOTP arcs
+Services\                        clipboard, capture, e-mail, commands
+Services\UpdateService.cs        GitHub release check, verified download and self-update
+AppVersion.cs                    dynamic version read from assembly metadata
+SemanticVersion.cs               SemVer parsing and comparison
+Themes\PauthTheme.xaml           palette, brushes, control templates
+Localization\                    loader, XAML markup extension and Loc helpers
+langs\                           pt-PT / en-US JSON translations + translator guide
+Account.cs                       account model
+AccountStore.cs                  AES-GCM keyed vault + legacy DPAPI migration
+SecurityService.cs               password verifier, key wrapping, DPAPI reset, SMTP, backups
+AppPaths.cs                      data-folder resolution (supports PAUTH40_DATA_DIR)
 TotpService.cs / OtpAuthParser.cs / QrDecoder.cs
-Assets\                         duck mascot and app icon
-docs\screenshots\               interface screenshots used by this README
-preview.png                     Latest --render output of the demo vault
+Assets\                          duck mascot and app icon
+docs\screenshots\                interface screenshots used by this README
+docs\releases\                   release notes per version (bilingual)
+
+linux\                           Uno Platform port (net10.0, all platforms)
+  Pauth40.sln                    cross-platform solution
+  Directory.Packages.props       centralized NuGet versions
+  Pauth40\Pauth40.csproj         single project with all target frameworks
+  Pauth40\App.xaml(.cs)          DI bootstrap and window creation
+  Pauth40\MainPage.xaml(.cs)     single-window shell and navigation
+  Pauth40\Views\*                Security, Main, Settings, Update and Capture views
+  Pauth40\ViewModels\            shared TOTP view model
+  Pauth40\Services\              clipboard, capture, pickers, updates, release notes
+  Pauth40\Themes\PauthTheme.xaml palette, styles and icon geometries
+  Pauth40\Platforms\             Android, iOS, tvOS, desktop and WASM entry points
+  Pauth40.desktop                Linux desktop entry
+  install-linux.sh               per-user Linux installer
+  uninstall-linux.sh             per-user Linux uninstaller
+  publish.sh / publish.ps1       release artifacts for Linux/macOS/Windows/WASM
+  README.md                      Uno build, packaging and platform notes
 ```
 
 ## Legal protection

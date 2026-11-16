@@ -87,6 +87,8 @@
     "security_reset_back": "Voltar para o início de sessão",
     "security_reset_dpapi_subtitle": "Defina uma nova senha para aceder ao cofre neste computador.",
     "security_reset_dpapi_note": "A recuperação local usa a cópia do cofre protegida pelo Windows para este utilizador. Só funciona na mesma conta do Windows que criou o cofre. Se mudar de computador ou de utilizador, use o código enviado por e-mail.",
+    "security_reset_local_link": "Redefinir usando a recuperação local deste dispositivo",
+    "security_reset_local_note": "A recuperação local usa a cópia do cofre protegida por este dispositivo. Só funciona no mesmo dispositivo e utilizador que criou o cofre. Se mudar de dispositivo, use o código enviado por e-mail.",
     "security_status_sending": "A enviar código...",
     "security_status_sent": "Código enviado para {0}. Reenvio em {1}s.",
     "security_status_resend": "Pode reenviar o código.",

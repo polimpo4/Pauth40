@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Pauth40",
+  "display": "standalone",
+  "name": "Pauth40",
+  "short_name": "Pauth40",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

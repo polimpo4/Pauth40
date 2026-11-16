@@ -87,6 +87,8 @@
     "security_reset_back": "Back to sign in",
     "security_reset_dpapi_subtitle": "Set a new password to access the vault on this computer.",
     "security_reset_dpapi_note": "Local recovery uses the copy of the vault protected by Windows for this user. It only works on the same Windows account that created the vault. If you change computer or user, use the code sent by email.",
+    "security_reset_local_link": "Reset using this device local recovery",
+    "security_reset_local_note": "Local recovery uses the copy of the vault protected by this device. It only works on the same device and user that created the vault. If you change device, use the code sent by email.",
     "security_status_sending": "Sending code...",
     "security_status_sent": "Code sent to {0}. Resend in {1}s.",
     "security_status_resend": "You can resend the code.",

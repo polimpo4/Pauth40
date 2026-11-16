@@ -1,0 +1,184 @@
+<Page x:Class="Pauth40.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Pauth40.Localization"
+      IsTabStop="True"
+      UseSystemFocusVisuals="False"
+      Background="{StaticResource WindowBackgroundBrush}"
+      KeyDown="Page_KeyDown">
+
+    <Grid x:Name="RootGrid" Background="{StaticResource WindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="54" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="52" />
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================ BACKGROUND -->
+        <Grid Grid.RowSpan="3" IsHitTestVisible="False">
+            <Ellipse Width="720" Height="440"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Top"
+                     Margin="0,-250,0,0"
+                     Opacity="0.18">
+                <Ellipse.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#2A00B7FF" Offset="0" />
+                        <GradientStop Color="#00007BFF" Offset="1" />
+                    </LinearGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Image Source="ms-appx:///Assets/duck_silhouette.png"
+                   Width="620" Height="620"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Margin="0,30,-170,0"
+                   Stretch="Uniform"
+                   Opacity="0.07" />
+        </Grid>
+
+        <!-- ============================================================ HEADER -->
+        <Grid Grid.Row="0" Background="#06111F">
+            <Border VerticalAlignment="Bottom" Height="1" Background="#1B4164" />
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="12,0,0,0">
+                <Button x:Name="BackButton"
+                        Style="{StaticResource IconButton}"
+                        Width="36" Height="34"
+                        Margin="0,0,4,0"
+                        Visibility="Collapsed"
+                        loc:Loc.ToolTipKey="security_reset_back"
+                        Click="Back_Click">
+                    <Path Style="{StaticResource IconBack}"
+                          Stroke="{StaticResource TextSecondaryBrush}"
+                          StrokeThickness="1.7"
+                          Width="18" Height="18" />
+                </Button>
+
+                <Border Width="26" Height="26" CornerRadius="7">
+                    <Border.Background>
+                        <ImageBrush ImageSource="ms-appx:///Assets/app_mark.png"
+                                    Stretch="UniformToFill" />
+                    </Border.Background>
+                </Border>
+
+                <TextBlock loc:Loc.Key="app_title"
+                           Style="{StaticResource WindowTitleText}"
+                           FontSize="16"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,0,8,0">
+                <Button x:Name="SettingsButton"
+                        Style="{StaticResource TitleBarButton}"
+                        Visibility="Collapsed"
+                        loc:Loc.ToolTipKey="common_settings"
+                        Click="Settings_Click">
+                    <Path Style="{StaticResource IconSettings}"
+                          Stroke="{StaticResource TextSecondaryBrush}"
+                          StrokeThickness="1.6"
+                          Width="18" Height="18" />
+                </Button>
+
+                <Button x:Name="CloseButton"
+                        Style="{StaticResource CloseTitleBarButton}"
+                        Visibility="Collapsed"
+                        loc:Loc.ToolTipKey="common_close"
+                        Click="Close_Click">
+                    <Path Data="M 2,2 L 12,12 M 12,2 L 2,12"
+                          Stroke="{StaticResource TextPrimaryBrush}"
+                          StrokeThickness="1.6"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          Width="14" Height="14"
+                          Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- ============================================================ CONTENT -->
+        <Grid Grid.Row="1">
+            <ContentControl x:Name="ContentHost"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
+
+            <Border x:Name="OverlayHost"
+                    Background="Transparent"
+                    Visibility="Collapsed" />
+        </Grid>
+
+        <!-- ============================================================ FOOTER -->
+        <Grid Grid.Row="2" Background="#040E1B">
+            <Border VerticalAlignment="Top" Height="1" Background="#1B4164" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <Border Width="110" Height="1" Background="{StaticResource FooterLineBrush}" />
+                <TextBlock loc:Loc.Key="main_created_by"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           FontSize="13.5"
+                           FontWeight="SemiBold"
+                           Margin="12,0,0,0"
+                           VerticalAlignment="Center" />
+                <Ellipse Width="18" Height="18" Margin="6,0,4,0">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="ms-appx:///Assets/app_mark.png"
+                                    Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock loc:Loc.Key="main_brabo"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           FontSize="13.5"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center" />
+                <Border Width="110" Height="1" Margin="12,0,0,0"
+                        Background="{StaticResource FooterLineBrush}" />
+            </StackPanel>
+
+            <TextBlock x:Name="VersionText"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="0,0,16,0"
+                       Foreground="{StaticResource TextMutedBrush}"
+                       FontSize="11.5" />
+        </Grid>
+
+        <!-- ============================================================ TOAST -->
+        <Border x:Name="ToastHost"
+                Grid.RowSpan="3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,72"
+                Padding="17,9"
+                CornerRadius="13"
+                Background="#F2071A2D"
+                BorderBrush="#9900D9FF"
+                BorderThickness="1"
+                Visibility="Collapsed"
+                IsHitTestVisible="False">
+            <StackPanel Orientation="Horizontal">
+                <Path Style="{StaticResource IconCheck}"
+                      Stroke="{StaticResource CyanBrush}"
+                      StrokeThickness="2"
+                      Width="17" Height="17"
+                      VerticalAlignment="Center" />
+                <TextBlock x:Name="ToastText"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="13.5"
+                           FontWeight="SemiBold"
+                           Margin="9,0,0,0"
+                           MaxWidth="520"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

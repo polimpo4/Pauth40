@@ -1,0 +1,65 @@
+<Project Sdk="Uno.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-tvos;net10.0-windows10.0.26100;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+
+    <!-- Display name -->
+    <ApplicationTitle>Pauth40</ApplicationTitle>
+    <!-- App Identifier -->
+    <ApplicationId>com.pauth40.authenticator</ApplicationId>
+    <!-- Versions -->
+    <ApplicationDisplayVersion>2.2.0</ApplicationDisplayVersion>
+    <ApplicationVersion>22</ApplicationVersion>
+    <Version>2.2.0</Version>
+    <FileVersion>2.2.0.0</FileVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <InformationalVersion>2.2.0</InformationalVersion>
+
+    <ApplicationPublisher>Pat&#227;o</ApplicationPublisher>
+    <Description>Modern local two-factor authenticator. Uno Platform port with Linux, Windows, macOS, Android, iOS, tvOS and WebAssembly support.</Description>
+    <Copyright>Copyright &#169; Pat&#227;o</Copyright>
+    <Company>Pat&#227;o</Company>
+    <Authors>Pat&#227;o</Authors>
+
+    <UnoFeatures>
+      Skia;
+    </UnoFeatures>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Otp.NET" />
+    <PackageReference Include="ZXing.Net" />
+    <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData"
+                      Condition="$(TargetFramework.Contains('-windows'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="langs\*.json" />
+    <Content Include="langs\*.json"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Assets\*.png"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios')) Or $(TargetFramework.Contains('-tvos')) Or $(TargetFramework.Contains('-browserwasm'))">
+    <!-- System.Text.Json uses reflection over the vault models. Root the app
+         assembly so trimming/AOT never removes the serialized properties. -->
+    <TrimmerRootAssembly Include="$(AssemblyName)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios')) Or $(TargetFramework.Contains('-tvos')) Or $(TargetFramework.Contains('-browserwasm'))">
+    <NoWarn>$(NoWarn);IL2026</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="$(TargetFramework.Contains('-windows'))">$(DefineConstants);PAUTH40_WINDOWS</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Contains('-desktop'))">$(DefineConstants);PAUTH40_DESKTOP</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios')) Or $(TargetFramework.Contains('-tvos'))">$(DefineConstants);PAUTH40_MOBILE</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Contains('-browserwasm'))">$(DefineConstants);PAUTH40_WASM</DefineConstants>
+  </PropertyGroup>
+</Project>

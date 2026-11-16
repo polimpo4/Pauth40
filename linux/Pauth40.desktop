@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Pauth40
+GenericName=Two Factor Authenticator
+Comment=Local TOTP two-factor authenticator
+Comment[pt]=Autenticador TOTP de dois fatores local
+Exec=Pauth40
+TryExec=Pauth40
+Icon=pauth40
+Terminal=false
+Categories=Utility;Security;
+Keywords=2fa;totp;authenticator;otp;security;
+StartupNotify=true
+StartupWMClass=Pauth40
